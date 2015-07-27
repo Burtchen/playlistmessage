@@ -1,0 +1,13 @@
+{
+  "name": "playlistmessage",
+  "version": "0.1.0",
+  "description": "An application that allows you to send messages in the form of spotify playlists.",
+  "main": "index.js",
+  "scripts": {
+    "build": "jsx js build",
+    "start": "open http://localhost:4321 & httpster -cp 4321",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Christian Burtchen",
+  "license": "MIT"
+}
