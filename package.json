@@ -3,8 +3,12 @@
   "version": "0.1.0",
   "description": "An application that allows you to send messages in the form of spotify playlists.",
   "main": "index.js",
+  "watch": {
+    "build": "js/*.js"
+  },
   "scripts": {
     "build": "jsx js build",
+    "watch": "npm-watch",
     "start": "open http://localhost:4321 & httpster -cp 4321",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
