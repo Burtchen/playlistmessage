@@ -2,12 +2,13 @@ var Message = React.createClass({
     getInitialState: function() {
         return {
             text: "",
+            playlistTitle: "A playlist message",
             songs: []
         };
     },
     addSongsToPlaylist: function (playlistId, accessToken) {
         var request = new XMLHttpRequest();
-        var userId = 'burtchen'; //TODO: Get from user request
+        var userId = this.state.userId;
         var uris = _.pluck(this.state.songs, "uri"); //TODO: No undefineds.
         request.open('POST', 'https://api.spotify.com/v1/users/' + userId + '/playlists/' + playlistId + '/tracks', true);
         request.setRequestHeader('Content-Type', 'application/json');
@@ -27,9 +28,9 @@ var Message = React.createClass({
     createPlaylist: function (accessToken) {
         var that = this;
         var request = new XMLHttpRequest();
-        var userId = 'burtchen'; //TODO: Get from user request
+        var userId = this.state.userId;
         var data = {
-            name: "messageForYou" // TODO: Make playlist name customizable
+            name: this.state.playlistTitle
         };
         request.open('POST', 'https://api.spotify.com/v1/users/' + userId + '/playlists', true);
         request.setRequestHeader('Content-Type', 'application/json');
@@ -79,7 +80,7 @@ var Message = React.createClass({
                             if (firstMatch) {
                                 songObject.status = "match";
                                 songObject.id = firstMatch.id;
-                                songObject.url = firstMatch.uri;
+                                songObject.uri = firstMatch.uri;
                                 songObject.title = firstMatch.name;
                                 songObject.artist = firstMatch.artists[0].name;
                             } else {
@@ -102,8 +103,11 @@ var Message = React.createClass({
             <Song title={song.title} artist={song.artist} key={song.id} status={song.status}/>
         );
     },
-    handleChange: function(event) {
+    handleMessageTextChange: function(event) {
         this.setState({ text: event.target.value });
+    },
+    handlePlaylistNameChange: function(event) {
+        this.setState({ playlistTitle: event.target.value });
     },
 
     getSpotifyApi: function() { //TODO: If still logged in, we should directly go to the playlist creation
@@ -129,8 +133,7 @@ var Message = React.createClass({
         var messageCallback =  function(event) {
             var hash = JSON.parse(event.data);
             if (hash.type == 'access_token') {
-                that.getUserData(hash.access_token); //TODO: Maybe still display user data
-                that.createPlaylist(hash.access_token);
+                that.getUserData(hash.access_token);
             }
             window.removeEventListener("message", messageCallback);
         };
@@ -146,13 +149,15 @@ var Message = React.createClass({
 
     getUserData: function(accessToken) {
         var request = new XMLHttpRequest();
+        var that = this;
         request.open('GET', 'https://api.spotify.com/v1/me', true);
         request.setRequestHeader("Authorization", "Bearer " + accessToken);
         request.onreadystatechange = function() {
             if (this.readyState === 4) {
                 if (this.status >= 200 && this.status < 400) {
                     var resp = this.responseText;
-                    console.log(resp);
+                    that.setState({userId: JSON.parse(resp).id});
+                    that.createPlaylist(accessToken);
                 } else {
                     console.log("yikes, an error");
                 }
@@ -163,14 +168,19 @@ var Message = React.createClass({
         request = null;
     },
     render: function() {
+        var regex = /\s+/gi;
+        var wordCount = this.state.text.length > 0 ?
+            this.state.text.trim().replace(regex, ' ').split(' ').length  + " words": //TODO: pluralize
+            null;
+
         return (
             <div>
                 <div className="well clearfix">
-        <textarea placeholder="Type your spotify message here (maximum 15 words)." className="form-control"
-                  onChange={this.handleChange}>
-        </textarea>
+                    <textarea placeholder="Type your spotify message here (maximum 15 words)." className="form-control"
+                              onChange={this.handleMessageTextChange}>
+                    </textarea>
                     <br/>
-                    <span>{this.state.text.split(" ").length - 1} words ({this.state.text.length} characters)</span>
+                    <span>{wordCount}</span>
                     <button className="btn btn-primary pull-right"
                             onClick={this.getSongsForPlaylist}
                             disabled={this.state.text.length === 0}>Get songs for playlist</button>
@@ -179,9 +189,12 @@ var Message = React.createClass({
                     <ul id="react-suggested-songs" className="clearfix list-group">
                         {this.state.songs.map(this.eachSong)}
                     </ul>
-                    <button className="btn btn-primary pull-right"
-                            onClick={this.getSpotifyApi}
-                            disabled={this.state.songs.length === 0}>Create playlist</button>
+                    <div className="input-group">
+                        <input type="text" className="form-control" placeholder="Enter a playlist name" readonly={this.state.songs.length === 0} onChange={this.handlePlaylistNameChange} />
+                        <span className="input-group-btn">
+                            <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi} disabled={this.state.songs.length === 0}>Create playlist</button>
+                        </span>
+                    </div>
                 </div>
             </div>
         );
