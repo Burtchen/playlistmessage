@@ -51,8 +51,29 @@ var Message = React.createClass({
         var that = this;
         var incomingSongs = [];
         var spotifySearchUrl = "https://api.spotify.com/v1/search";
-        var searchKeywords = this.state.text.split(" "); //TODO: Custom delimiters, eliminate spaces.
-        searchKeywords.forEach(function (keyword) {
+        var searchKeywordGroups = this.state.text.split("("); //TODO: Check the number of parentheses
+		var searchKeywords = [];
+		searchKeywordGroups.forEach(function (group) {
+			if (group.indexOf(")") === -1) {
+				group.trim().split(" ").forEach(function (word) {
+					word = word.trim();
+					if (word.length) {
+						searchKeywords.push(word);
+					}
+				});
+			} else {
+				var searchKeywordSplit = group.split(")");
+				searchKeywords.push(searchKeywordSplit[0].trim());
+				searchKeywordSplit[1].trim().split(" ").forEach(function (word) {
+					word = word.trim();
+					if (word.length) {
+						searchKeywords.push(word);
+					}
+				});
+			}
+		});
+		
+		searchKeywords.forEach(function (keyword) {
             var request = new XMLHttpRequest();
             incomingSongs.push({
                 title: keyword,
