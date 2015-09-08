@@ -14,6 +14,7 @@ var Share = React.createClass({
 				<div className="btn-group" role="group" aria-label="Actions for the playlist message">
 					<button type="button" className="btn btn-success">Share via Whatsapp</button>
 					<button type="button" className="btn btn-success">Tweet</button>
+					<button type="button" className="btn btn-success">Email</button>
 					<button type="button" className="btn btn-success">Share on Facebook</button>
 				</div>
 				<div className="input-group" style={{marginTop: "5px"}} >

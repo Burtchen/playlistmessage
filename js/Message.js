@@ -3,7 +3,8 @@ var Message = React.createClass({
         return {
             text: "",
             playlistTitle: "A playlist message",
-			playlistUrl: "www.google.de",
+			playlistUrl: "www.google.de", //TODO: Empty string
+			searchTerms: [],
             songs: []
         };
     },
@@ -48,11 +49,9 @@ var Message = React.createClass({
             }
         };
     },
-    getSongsForPlaylist: function() {
-        var that = this;
-        var incomingSongs = [];
-        var spotifySearchUrl = "https://api.spotify.com/v1/search";
-        var searchKeywordGroups = this.state.text.split("("); //TODO: Check the number of parentheses
+	splitInputTerm: function () {
+		console.log('split');
+		var searchKeywordGroups = this.state.text.split("("); //TODO: Check the number of parentheses
 		var searchKeywords = [];
 		searchKeywordGroups.forEach(function (group) {
 			if (group.indexOf(")") === -1) {
@@ -73,8 +72,14 @@ var Message = React.createClass({
 				});
 			}
 		});
-		
-		searchKeywords.forEach(function (keyword) {
+		console.log(searchKeywords);
+		this.setState({searchTerms: searchKeywords});
+	},
+    getSongsForPlaylist: function() {
+        var that = this;
+        var incomingSongs = [];
+        var spotifySearchUrl = "https://api.spotify.com/v1/search";
+		this.state.searchTerms.forEach(function (keyword) {
             var request = new XMLHttpRequest();
             incomingSongs.push({
                 title: keyword,
@@ -133,6 +138,7 @@ var Message = React.createClass({
 	},
     handleMessageTextChange: function(event) {
 		this.setState({ text: event.target.value });
+		this.splitInputTerm();
     },
     handlePlaylistNameChange: function(event) {
         this.setState({ playlistTitle: event.target.value });
@@ -196,10 +202,17 @@ var Message = React.createClass({
         request = null;
     },
     render: function() {
-		var regex = /\s+/gi;
-        var wordCount = this.state.text.length > 0 ?
-            this.state.text.trim().replace(regex, ' ').split(' ').length  + " words": //TODO: pluralize
-            null;
+		// TODO: Panel that hints at delimiters and keyboard shortcut
+        var wordCount = this.state.searchTerms.length;
+		if (wordCount > 0) {
+			if (wordCount > 1) {
+				wordCount = wordCount + " search terms";
+			} else {
+				wordCount = wordCount + " search term";
+			}
+		} else {
+			wordCount = null;
+		}
 			
 		var share = this.state.playlistUrl ? <Share url={this.state.playlistUrl} /> : null;
 
