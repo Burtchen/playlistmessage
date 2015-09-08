@@ -125,8 +125,14 @@ var Message = React.createClass({
             <Song title={song.title} artist={song.artist} key={song.id} status={song.status}/>
         );
     },
+	checkForShortcut: function (event) {
+		if ((event.keyCode == 10 || event.keyCode == 13) && event.ctrlKey) {
+			React.findDOMNode(this.refs.keywordsearch).blur();
+			this.getSongsForPlaylist();
+		}
+	},
     handleMessageTextChange: function(event) {
-        this.setState({ text: event.target.value });
+		this.setState({ text: event.target.value });
     },
     handlePlaylistNameChange: function(event) {
         this.setState({ playlistTitle: event.target.value });
@@ -190,7 +196,6 @@ var Message = React.createClass({
         request = null;
     },
     render: function() {
-        //TODO: Shortcut support for textarea
 		var regex = /\s+/gi;
         var wordCount = this.state.text.length > 0 ?
             this.state.text.trim().replace(regex, ' ').split(' ').length  + " words": //TODO: pluralize
@@ -202,7 +207,8 @@ var Message = React.createClass({
             <div>
                 <div className="well clearfix">
                     <textarea placeholder="Type your spotify message here (maximum 15 words)." className="form-control"
-                              onChange={this.handleMessageTextChange}>
+                              ref="keywordsearch"
+							  onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
                     </textarea>
                     <br/>
                     <span>{wordCount}</span>
