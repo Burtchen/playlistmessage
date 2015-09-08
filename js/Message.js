@@ -3,6 +3,7 @@ var Message = React.createClass({
         return {
             text: "",
             playlistTitle: "A playlist message",
+			playlistUrl: "www.google.de",
             songs: []
         };
     },
@@ -189,10 +190,13 @@ var Message = React.createClass({
         request = null;
     },
     render: function() {
-        var regex = /\s+/gi;
+        //TODO: Shortcut support for textarea
+		var regex = /\s+/gi;
         var wordCount = this.state.text.length > 0 ?
             this.state.text.trim().replace(regex, ' ').split(' ').length  + " words": //TODO: pluralize
             null;
+			
+		var share = this.state.playlistUrl ? <Share url={this.state.playlistUrl} /> : null;
 
         return (
             <div>
@@ -211,12 +215,13 @@ var Message = React.createClass({
                         {this.state.songs.map(this.eachSong)}
                     </ul>
                     <div className="input-group">
-                        <input type="text" className="form-control" placeholder="Enter a playlist name" readonly={this.state.songs.length === 0} onChange={this.handlePlaylistNameChange} />
+                        <input type="text" className="form-control" placeholder="Enter a playlist name" readOnly={this.state.songs.length === 0} onChange={this.handlePlaylistNameChange} />
                         <span className="input-group-btn">
                             <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi} disabled={this.state.songs.length === 0}>Create playlist</button>
                         </span>
                     </div>
                 </div>
+				{{share}}
             </div>
         );
     }
