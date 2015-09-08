@@ -50,7 +50,6 @@ var Message = React.createClass({
         };
     },
 	splitInputTerm: function () {
-		console.log('split');
 		var searchKeywordGroups = this.state.text.split("("); //TODO: Check the number of parentheses
 		var searchKeywords = [];
 		searchKeywordGroups.forEach(function (group) {
@@ -72,7 +71,6 @@ var Message = React.createClass({
 				});
 			}
 		});
-		console.log(searchKeywords);
 		this.setState({searchTerms: searchKeywords});
 	},
     getSongsForPlaylist: function() {
