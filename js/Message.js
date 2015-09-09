@@ -3,7 +3,7 @@ var Message = React.createClass({
         return {
             text: "",
             playlistTitle: "A playlist message",
-			playlistUrl: "www.google.de", //TODO: Empty string
+			playlistUrl: "",
 			searchTerms: [],
             songs: []
         };
@@ -42,6 +42,10 @@ var Message = React.createClass({
             if (this.readyState == 4) {
                 if (this.status >= 200 && this.status < 400) {
                     var responseObject = JSON.parse(this.responseText);
+					that.setState({
+						playlistUrl: responseObject.external_urls.spotify
+					});
+					//TODO: Optimistic updating implementation
                     that.addSongsToPlaylist(responseObject.id, accessToken);
                 } else {
                     console.log('There was an error creating the playlist.');
