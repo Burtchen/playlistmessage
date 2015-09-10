@@ -5,7 +5,8 @@ var Message = React.createClass({
             playlistTitle: "A playlist message",
 			playlistUrl: "",
 			searchTerms: [],
-            songs: []
+            songs: [],
+			supportsCopy: null
         };
     },
     addSongsToPlaylist: function (playlistId, accessToken) {
@@ -78,7 +79,13 @@ var Message = React.createClass({
 		this.setState({searchTerms: searchKeywords});
 	},
     getSongsForPlaylist: function() {
-        var that = this;
+        // we're using the first user-initiated event to query for copy support
+		if (this.state.supportsCopy === null) {
+			this.setState({
+				supportsCopy: !!document.queryCommandSupported('copy')
+			});
+		}
+		var that = this;
         var incomingSongs = [];
         var spotifySearchUrl = "https://api.spotify.com/v1/search";
 		this.state.searchTerms.forEach(function (keyword) {
@@ -216,7 +223,7 @@ var Message = React.createClass({
 			wordCount = null;
 		}
 			
-		var share = this.state.playlistUrl ? <Share url={this.state.playlistUrl} /> : null;
+		var share = this.state.playlistUrl ? <Share url={this.state.playlistUrl} supportsCopy={this.state.supportsCopy} /> : null;
 
         return (
             <div>
