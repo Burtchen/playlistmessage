@@ -60,7 +60,7 @@ var Message = React.createClass({
 		searchKeywordGroups.forEach(function (group) {
 			if (group.indexOf(")") === -1) {
 				group.trim().split(" ").forEach(function (word) {
-					word = word.trim();
+					word = word.trim().replace(/\W/g, '');
 					if (word.length) {
 						searchKeywords.push(word);
 					}
@@ -69,7 +69,7 @@ var Message = React.createClass({
 				var searchKeywordSplit = group.split(")");
 				searchKeywords.push(searchKeywordSplit[0].trim());
 				searchKeywordSplit[1].trim().split(" ").forEach(function (word) {
-					word = word.trim();
+					word = word.trim().replace(/\W/g, '');
 					if (word.length) {
 						searchKeywords.push(word);
 					}
