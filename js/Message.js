@@ -146,8 +146,7 @@ var Message = React.createClass({
 		}
 	},
     handleMessageTextChange: function(event) {
-		this.setState({ text: event.target.value });
-		this.splitInputTerm();
+        this.setState({ text: event.target.value }, this.splitInputTerm);
     },
     handlePlaylistNameChange: function(event) {
         this.setState({ playlistTitle: event.target.value });
