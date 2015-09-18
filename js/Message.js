@@ -202,7 +202,9 @@ var Message = React.createClass({
                     that.setState({userId: JSON.parse(resp).id});
                     that.createPlaylist(accessToken);
                 } else {
-                    console.log("yikes, an error");
+                    console.log("yikes, an error getting the user data");
+                    // TODO: Specify user permission error
+                    that.setState({generalError: true});
                 }
             }
         };
@@ -223,14 +225,27 @@ var Message = React.createClass({
 			wordCount = null;
 		}
 			
-		var share = this.state.playlistUrl ? <Share url={this.state.playlistUrl} supportsCopy={this.state.supportsCopy} /> : null;
+		var share = this.state.playlistUrl && !this.state.generalError ? <Share url={this.state.playlistUrl} supportsCopy={this.state.supportsCopy} /> : null;
 
+        //TODO: Specific errors
+        var errorPanel = this.state.generalError ? (
+            <div className="alert alert-danger">We're terribly sorry, but there seems to be a problem with the Spotify API. Please check back again later.</div>
+            ) :
+            null;
+        var userActions = this.state.generalError ? null : (
+            <div className="input-group">
+                <input type="text" className="form-control" placeholder="Enter a playlist name" readOnly={this.state.songs.length === 0} onChange={this.handlePlaylistNameChange} />
+                        <span className="input-group-btn">
+                            <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi} disabled={this.state.songs.length === 0}>Create playlist</button>
+                        </span>
+            </div>
+            );
         return (
             <div>
                 <div className="well clearfix">
                     <textarea placeholder="Type your spotify message here (maximum 15 words)." className="form-control"
                               ref="keywordsearch"
-							  onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
+                              onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
                     </textarea>
                     <br/>
                     <span>{wordCount}</span>
@@ -242,14 +257,10 @@ var Message = React.createClass({
                     <ul id="react-suggested-songs" className="clearfix list-group">
                         {this.state.songs.map(this.eachSong)}
                     </ul>
-                    <div className="input-group">
-                        <input type="text" className="form-control" placeholder="Enter a playlist name" readOnly={this.state.songs.length === 0} onChange={this.handlePlaylistNameChange} />
-                        <span className="input-group-btn">
-                            <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi} disabled={this.state.songs.length === 0}>Create playlist</button>
-                        </span>
-                    </div>
+                    {errorPanel}
+                    {userActions}
                 </div>
-				{{share}}
+                {share}
             </div>
         );
     }
