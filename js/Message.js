@@ -140,10 +140,12 @@ var Message = React.createClass({
         );
     },
 	checkForShortcut: function (event) {
-		if ((event.keyCode == 10 || event.keyCode == 13) && event.ctrlKey) {
-			React.findDOMNode(this.refs.keywordsearch).blur();
-			this.getSongsForPlaylist();
-		}
+		setTimeout(function () {
+			if ((event.keyCode == 10 || event.keyCode == 13) && event.ctrlKey) {
+				React.findDOMNode(this.refs.keywordsearch).blur();
+				this.getSongsForPlaylist();
+			}
+		}, 50);
 	},
     handleMessageTextChange: function(event) {
 		this.setState({ text: event.target.value });
