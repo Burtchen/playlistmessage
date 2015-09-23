@@ -1,9 +1,11 @@
 var Message = React.createClass({
     getInitialState: function() {
         return {
+            accessToken: null,
             text: "",
             playlistTitle: "A playlist message",
 			playlistUrl: "",
+			marketValue: "all",
 			searchTerms: [],
             songs: [],
 			supportsCopy: null
@@ -28,7 +30,7 @@ var Message = React.createClass({
             }
         };
     },
-    createPlaylist: function (accessToken) {
+    createPlaylist: function () {
         var that = this;
         var request = new XMLHttpRequest();
         var userId = this.state.userId;
@@ -37,7 +39,7 @@ var Message = React.createClass({
         };
         request.open('POST', 'https://api.spotify.com/v1/users/' + userId + '/playlists', true);
         request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader("Authorization", "Bearer " + accessToken);
+        request.setRequestHeader("Authorization", "Bearer " + that.state.accessToken);
         request.send(JSON.stringify(data));
         request.onreadystatechange = function() {
             if (this.readyState == 4) {
@@ -47,7 +49,7 @@ var Message = React.createClass({
 						playlistUrl: responseObject.external_urls.spotify
 					});
 					//TODO: Optimistic updating implementation
-                    that.addSongsToPlaylist(responseObject.id, accessToken);
+                    that.addSongsToPlaylist(responseObject.id, that.state.accessToken);
                 } else {
                     console.log('There was an error creating the playlist.');
                 }
@@ -55,7 +57,7 @@ var Message = React.createClass({
         };
     },
 	splitInputTerm: function () {
-		var searchKeywordGroups = this.state.text.split("("); //TODO: Check the number of parentheses
+        var searchKeywordGroups = this.state.text.split("("); //TODO: Check the number of parentheses
 		var searchKeywords = [];
 		searchKeywordGroups.forEach(function (group) {
 			if (group.indexOf(")") === -1) {
@@ -102,12 +104,13 @@ var Message = React.createClass({
                     if (this.status >= 200 && this.status < 400) {
                         var data = JSON.parse(this.responseText);
                         var songObject; //TODO: let;
-                        // TODO: Filter by market
                         // TODO: Multiple matches
+                        // TODO: Prefer popular titles
+                        // TODO: Test cases Jojo Action, happy people
                         if (data.tracks && data.tracks.items) {
                             _.each(data.tracks.items, function (item) {
                                 firstMatch = null;
-                                if (item.name.toLowerCase() === keyword.toLowerCase()) {
+                                if (item.name.toLowerCase() === keyword.toLowerCase() && (that.state.marketValue === "all" || _.contains(item.available_markets, that.state.marketValue))) {
                                     firstMatch = item;
                                     return false;
                                 }
@@ -140,22 +143,28 @@ var Message = React.createClass({
         );
     },
 	checkForShortcut: function (event) {
-		setTimeout(function () {
-			if ((event.keyCode == 10 || event.keyCode == 13) && event.ctrlKey) {
-				React.findDOMNode(this.refs.keywordsearch).blur();
-				this.getSongsForPlaylist();
-			}
-		}, 50);
+        if ((event.keyCode == 10 || event.keyCode == 13) && event.ctrlKey) {
+			React.findDOMNode(this.refs.keywordsearch).blur();
+			this.getSongsForPlaylist();
+		}
 	},
     handleMessageTextChange: function(event) {
-		this.setState({ text: event.target.value });
-		this.splitInputTerm();
+        this.setState({ text: event.target.value }, this.splitInputTerm);
+    },
+    handleMarketSelectorChange: function(e){
+        //TODO: Get complete ISO list
+        this.setState({ marketValue: e.target.value});
     },
     handlePlaylistNameChange: function(event) {
         this.setState({ playlistTitle: event.target.value });
     },
 
-    getSpotifyApi: function() { //TODO: If still logged in, we should directly go to the playlist creation
+    getSpotifyApi: function() {
+        if (this.state.accessToken && this.state.userId) {
+            this.createPlaylist();
+            return;
+        }
+
         var that = this;
         var CLIENT_ID = '14ab7c0b9c0b4c7d982b50a0eb7f8e8a';
         var REDIRECT_URI = 'https://www.der-burtchen.de/playlistmessage/proxy/';
@@ -178,7 +187,8 @@ var Message = React.createClass({
         var messageCallback =  function(event) {
             var hash = JSON.parse(event.data);
             if (hash.type == 'access_token') {
-                that.getUserData(hash.access_token);
+                that.setState({accessToken: hash.access_token});
+                that.getUserData();
             }
             window.removeEventListener("message", messageCallback);
         };
@@ -192,19 +202,21 @@ var Message = React.createClass({
 
     },
 
-    getUserData: function(accessToken) {
+    getUserData: function() {
         var request = new XMLHttpRequest();
         var that = this;
         request.open('GET', 'https://api.spotify.com/v1/me', true);
-        request.setRequestHeader("Authorization", "Bearer " + accessToken);
+        request.setRequestHeader("Authorization", "Bearer " + that.state.accessToken);
         request.onreadystatechange = function() {
             if (this.readyState === 4) {
                 if (this.status >= 200 && this.status < 400) {
                     var resp = this.responseText;
                     that.setState({userId: JSON.parse(resp).id});
-                    that.createPlaylist(accessToken);
+                    that.createPlaylist();
                 } else {
-                    console.log("yikes, an error");
+                    console.log("yikes, an error getting the user data");
+                    // TODO: Specify user permission error
+                    that.setState({generalError: true});
                 }
             }
         };
@@ -225,17 +237,34 @@ var Message = React.createClass({
 			wordCount = null;
 		}
 			
-		var share = this.state.playlistUrl ? <Share url={this.state.playlistUrl} supportsCopy={this.state.supportsCopy} /> : null;
+		var share = this.state.playlistUrl && !this.state.generalError ? <Share url={this.state.playlistUrl} supportsCopy={this.state.supportsCopy} /> : null;
 
+        //TODO: Specific errors
+        var errorPanel = this.state.generalError ? (
+            <div className="alert alert-danger">We're terribly sorry, but there seems to be a problem with the Spotify API. Please check back again later.</div>
+            ) :
+            null;
+        var userActions = this.state.generalError ? null : (
+            <div className="input-group">
+                <input type="text" className="form-control" placeholder="Enter a playlist name" readOnly={this.state.songs.length === 0} onChange={this.handlePlaylistNameChange} />
+                        <span className="input-group-btn">
+                            <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi} disabled={this.state.songs.length === 0}>Create playlist</button>
+                        </span>
+            </div>
+            );
         return (
             <div>
                 <div className="well clearfix">
                     <textarea placeholder="Type your spotify message here (maximum 15 words)." className="form-control"
                               ref="keywordsearch"
-							  onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
+                              onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
                     </textarea>
                     <br/>
                     <span>{wordCount}</span>
+                    <select name="market-selector" defaultValue="all" onChange={this.handleMarketSelectorChange} >
+                        <option value="all">Do not restrict by Spotify market</option>
+                        <option value="DE">Germany</option>
+                    </select>
                     <button className="btn btn-primary pull-right"
                             onClick={this.getSongsForPlaylist}
                             disabled={this.state.text.length === 0}>Get songs for playlist</button>
@@ -244,14 +273,10 @@ var Message = React.createClass({
                     <ul id="react-suggested-songs" className="clearfix list-group">
                         {this.state.songs.map(this.eachSong)}
                     </ul>
-                    <div className="input-group">
-                        <input type="text" className="form-control" placeholder="Enter a playlist name" readOnly={this.state.songs.length === 0} onChange={this.handlePlaylistNameChange} />
-                        <span className="input-group-btn">
-                            <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi} disabled={this.state.songs.length === 0}>Create playlist</button>
-                        </span>
-                    </div>
+                    {errorPanel}
+                    {userActions}
                 </div>
-				{{share}}
+                {share}
             </div>
         );
     }
