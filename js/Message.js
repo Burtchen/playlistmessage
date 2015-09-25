@@ -96,7 +96,8 @@ var Message = React.createClass({
                 title: keyword,
                 status: "pending"
             });
-            var firstMatch;
+            var allMatches;
+			var firstMatch;
             that.setState({songs: incomingSongs});
             request.open('GET', spotifySearchUrl + "?q=" + keyword + "&type=track", true);
             request.onreadystatechange = function() {
@@ -105,16 +106,17 @@ var Message = React.createClass({
                         var data = JSON.parse(this.responseText);
                         var songObject; //TODO: let;
                         // TODO: Multiple matches
-                        // TODO: Prefer popular titles
                         // TODO: Test cases Jojo Action, happy people
-                        if (data.tracks && data.tracks.items) {
-                            _.each(data.tracks.items, function (item) {
-                                firstMatch = null;
-                                if (item.name.toLowerCase() === keyword.toLowerCase() && (that.state.marketValue === "all" || _.contains(item.available_markets, that.state.marketValue))) {
-                                    firstMatch = item;
-                                    return false;
-                                }
-                            });
+						if (data.tracks && data.tracks.items) {
+							allMatches = _.filter(data.tracks.items, function (item) {
+								return item.name.toLowerCase() === keyword.toLowerCase() &&
+									(that.state.marketValue === "all" || _.contains(item.available_markets, that.state.marketValue));
+								});
+							if (!_.isEmpty(allMatches)) {
+								firstMatch = _.max(allMatches, function (item) {
+									return _.isUndefined(item.popularity) ? 0 : item.popularity;
+								});
+							}
                             songObject = _.findWhere(incomingSongs, {title: keyword});
                             if (firstMatch) {
                                 songObject.status = "match";
