@@ -240,6 +240,7 @@ var Message = React.createClass({
 		}
 			
 		var share = this.state.playlistUrl && !this.state.generalError ? <Share url={this.state.playlistUrl} supportsCopy={this.state.supportsCopy} /> : null;
+        var marketSelector = <Markets handleChange={this.handleMarketSelectorChange}/>;
 
         //TODO: Specific errors
         var errorPanel = this.state.generalError ? (
@@ -263,10 +264,7 @@ var Message = React.createClass({
                     </textarea>
                     <br/>
                     <span>{wordCount}</span>
-                    <select name="market-selector" defaultValue="all" onChange={this.handleMarketSelectorChange} >
-                        <option value="all">Do not restrict by Spotify market</option>
-                        <option value="DE">Germany</option>
-                    </select>
+                    {marketSelector}
                     <button className="btn btn-primary pull-right"
                             onClick={this.getSongsForPlaylist}
                             disabled={this.state.text.length === 0}>Get songs for playlist</button>
