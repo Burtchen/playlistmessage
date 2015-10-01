@@ -106,7 +106,6 @@ var Message = React.createClass({
                         var data = JSON.parse(this.responseText);
                         var songObject; //TODO: let;
                         // TODO: Multiple matches
-                        // TODO: Test cases Jojo Action, happy people
 						if (data.tracks && data.tracks.items) {
 							allMatches = _.filter(data.tracks.items, function (item) {
 								return item.name.toLowerCase() === keyword.toLowerCase() &&
@@ -154,7 +153,6 @@ var Message = React.createClass({
         this.setState({ text: event.target.value }, this.splitInputTerm);
     },
     handleMarketSelectorChange: function(e){
-        //TODO: Get complete ISO list
         this.setState({ marketValue: e.target.value});
     },
     handlePlaylistNameChange: function(event) {
@@ -187,10 +185,17 @@ var Message = React.createClass({
             top = (screen.height / 2) - (height / 2);
 
         var messageCallback =  function(event) {
-            var hash = JSON.parse(event.data);
-            if (hash.type == 'access_token') {
-                that.setState({accessToken: hash.access_token});
-                that.getUserData();
+            if (event.data === "authentification failed") {
+                that.setState({authError: true});
+            } else {
+                var hash = JSON.parse(event.data);
+                if (hash.type == 'access_token') {
+                    that.setState({
+                        accessToken: hash.access_token,
+                        authError: false
+                    });
+                    that.getUserData();
+                }
             }
             window.removeEventListener("message", messageCallback);
         };
@@ -217,7 +222,6 @@ var Message = React.createClass({
                     that.createPlaylist();
                 } else {
                     console.log("yikes, an error getting the user data");
-                    // TODO: Specify user permission error
                     that.setState({generalError: true});
                 }
             }
@@ -228,22 +232,14 @@ var Message = React.createClass({
     },
     render: function() {
 		// TODO: Panel that hints at delimiters and keyboard shortcut
-        var wordCount = this.state.searchTerms.length;
-		if (wordCount > 0) {
-			if (wordCount > 1) {
-				wordCount = wordCount + " search terms";
-			} else {
-				wordCount = wordCount + " search term";
-			}
-		} else {
-			wordCount = null;
-		}
-			
 		var share = this.state.playlistUrl && !this.state.generalError ? <Share url={this.state.playlistUrl} supportsCopy={this.state.supportsCopy} /> : null;
         var marketSelector = <Markets handleChange={this.handleMarketSelectorChange}/>;
 
-        //TODO: Specific errors
-        var errorPanel = this.state.generalError ? (
+        var authErrorPanel = this.state.authError ? (
+            <div className="alert alert-danger">Something went wrong with the app authorization, please try again.</div>
+        ) :
+            null;
+        var generalErrorPanel = this.state.generalError ? (
             <div className="alert alert-danger">We're terribly sorry, but there seems to be a problem with the Spotify API. Please check back again later.</div>
             ) :
             null;
@@ -263,7 +259,6 @@ var Message = React.createClass({
                               onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
                     </textarea>
                     <br/>
-                    <span>{wordCount}</span>
                     {marketSelector}
                     <button className="btn btn-primary pull-right"
                             onClick={this.getSongsForPlaylist}
@@ -273,7 +268,8 @@ var Message = React.createClass({
                     <ul id="react-suggested-songs" className="clearfix list-group">
                         {this.state.songs.map(this.eachSong)}
                     </ul>
-                    {errorPanel}
+                    {authErrorPanel}
+                    {generalErrorPanel}
                     {userActions}
                 </div>
                 {share}

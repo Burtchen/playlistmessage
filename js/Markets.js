@@ -6,7 +6,8 @@ var Markets = React.createClass({
 		};
 	},
 	eachMarket: function(market) {
-		return (
+		// TODO: This is too slow
+        return (
 			<option value={market.Code}>{market.Name}</option>
 		);
 	},
