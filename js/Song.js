@@ -1,4 +1,7 @@
 var Song = React.createClass({
+    shouldComponentUpdate: function () {
+        return false;
+    },
     render: function() {
         if (this.props.status === "pending") {
             return (
