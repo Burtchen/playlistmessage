@@ -14,7 +14,7 @@ var Message = React.createClass({
     addSongsToPlaylist: function (playlistId, accessToken) {
         var request = new XMLHttpRequest();
         var userId = this.state.userId;
-        var uris = _.pluck(this.state.songs, "uri"); //TODO: No undefineds.
+        var uris = _.pluck(this.state.songs, "uri");
         request.open('POST', 'https://api.spotify.com/v1/users/' + userId + '/playlists/' + playlistId + '/tracks', true);
         request.setRequestHeader('Content-Type', 'application/json');
         request.setRequestHeader("Authorization", "Bearer " + accessToken);
@@ -108,7 +108,7 @@ var Message = React.createClass({
                         // TODO: Multiple matches
 						if (data.tracks && data.tracks.items) {
 							allMatches = _.filter(data.tracks.items, function (item) {
-								return item.name.toLowerCase() === keyword.toLowerCase() &&
+                                return !_.isEmpty(item.uri) && item.name.toLowerCase() === keyword.toLowerCase() &&
 									(that.state.marketValue === "all" || _.contains(item.available_markets, that.state.marketValue));
 								});
 							if (!_.isEmpty(allMatches)) {
@@ -176,7 +176,7 @@ var Message = React.createClass({
         }
 
         var url = getLoginURL([
-            'playlist-modify-public' //TODO: check whether private is better/worse
+            'playlist-modify-public'
         ]);
 
         var width = 450,
