@@ -81,6 +81,7 @@ var Message = React.createClass({
 		this.setState({searchTerms: searchKeywords});
 	},
     getSongsForPlaylist: function() {
+        this.splitInputTerm();
         // we're using the first user-initiated event to query for copy support
 		if (this.state.supportsCopy === null) {
 			this.setState({
@@ -150,7 +151,7 @@ var Message = React.createClass({
 		}
 	},
     handleMessageTextChange: function(event) {
-        this.setState({ text: event.target.value }, this.splitInputTerm);
+        this.setState( {text: event.target.value});
     },
     handleMarketSelectorChange: function(e){
         this.setState({ marketValue: e.target.value});
@@ -245,9 +246,9 @@ var Message = React.createClass({
             null;
         var userActions = this.state.generalError ? null : (
             <div className="input-group">
-                <input type="text" className="form-control" placeholder="Enter a playlist name" readOnly={this.state.songs.length === 0} onChange={this.handlePlaylistNameChange} />
+                <input type="text" className="form-control" placeholder="Enter a playlist name" readOnly={this.state.text.length === 0} onChange={this.handlePlaylistNameChange} />
                         <span className="input-group-btn">
-                            <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi} disabled={this.state.songs.length === 0}>Create playlist</button>
+                            <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi} disabled={this.state.text.length === 0}>Create playlist</button>
                         </span>
             </div>
             );
@@ -262,7 +263,7 @@ var Message = React.createClass({
                     {marketSelector}
                     <button className="btn btn-primary pull-right"
                             onClick={this.getSongsForPlaylist}
-                            disabled={this.state.text.length === 0}>Get songs for playlist</button>
+                            disabled={this.state.songs.length === 0}>Get songs for playlist</button>
                 </div>
                 <div className="well clearfix">
                     <ul id="react-suggested-songs" className="clearfix list-group">
