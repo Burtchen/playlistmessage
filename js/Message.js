@@ -78,10 +78,9 @@ var Message = React.createClass({
 				});
 			}
 		});
-		this.setState({searchTerms: searchKeywords});
+		this.setState({searchTerms: searchKeywords}, this.getSongsForPlaylist);
 	},
     getSongsForPlaylist: function() {
-        this.splitInputTerm();
         // we're using the first user-initiated event to query for copy support
 		if (this.state.supportsCopy === null) {
 			this.setState({
@@ -147,7 +146,7 @@ var Message = React.createClass({
 	checkForShortcut: function (event) {
         if ((event.keyCode == 10 || event.keyCode == 13) && event.ctrlKey) {
 			React.findDOMNode(this.refs.keywordsearch).blur();
-			this.getSongsForPlaylist();
+			this.splitInputTerm();
 		}
 	},
     handleMessageTextChange: function(event) {
@@ -262,8 +261,8 @@ var Message = React.createClass({
                     <br/>
                     {marketSelector}
                     <button className="btn btn-primary pull-right"
-                            onClick={this.getSongsForPlaylist}
-                            disabled={this.state.songs.length === 0}>Get songs for playlist</button>
+                            onClick={this.splitInputTerm}
+                            disabled={this.state.text.length === 0}>Get songs for playlist</button>
                 </div>
                 <div className="well clearfix">
                     <ul id="react-suggested-songs" className="clearfix list-group">
