@@ -245,33 +245,44 @@ var Message = React.createClass({
             null;
         var userActions = this.state.generalError ? null : (
             <div className="input-group">
-                <input type="text" className="form-control" placeholder="Enter a playlist name" readOnly={this.state.text.length === 0} onChange={this.handlePlaylistNameChange} />
-                        <span className="input-group-btn">
-                            <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi} disabled={this.state.text.length === 0}>Create playlist</button>
-                        </span>
+              <input type="text" className="form-control" placeholder="Enter a playlist name" readOnly={this.state.text.length === 0} onChange={this.handlePlaylistNameChange} />
+              <span className="input-group-btn">
+                <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi} disabled={this.state.text.length === 0}>Create playlist</button>
+              </span>
             </div>
             );
         return (
             <div>
-                <div className="well clearfix">
-                    <textarea placeholder="Type your spotify message here (maximum 15 words)." className="form-control"
-                              ref="keywordsearch"
-                              onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
-                    </textarea>
-                    <br/>
-                    {marketSelector}
-                    <button className="btn btn-primary pull-right"
-                            onClick={this.splitInputTerm}
-                            disabled={this.state.text.length === 0}>Get songs for playlist</button>
+              <div className="well clearfix">
+                <div className="sm_container header">
+                  <div className="sm_section">
+                    <h1 className="title">Spotifymessage</h1>
+                  </div>
                 </div>
-                <div className="well clearfix">
-                    <ul id="react-suggested-songs" className="clearfix list-group">
-                        {this.state.songs.map(this.eachSong)}
-                    </ul>
-                    {authErrorPanel}
-                    {generalErrorPanel}
-                    {userActions}
+                <div className="sm_section arrow">
+                  <textarea placeholder="Type your spotify message here (maximum 15 words)." className="form-control"
+                            ref="keywordsearch"
+                            onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
+                  </textarea>
+                  {marketSelector}
+                  <button className="btn btn-primary pull-right"
+                          onClick={this.splitInputTerm}
+                          disabled={this.state.text.length === 0}>Get songs for playlist
+                  </button>
                 </div>
+              </div>
+              <div className="sm_container">
+                <div className="sm_section">
+                  <div className="well clearfix">
+                      <ul id="react-suggested-songs" className="clearfix list-group">
+                          {this.state.songs.map(this.eachSong)}
+                      </ul>
+                      {authErrorPanel}
+                      {generalErrorPanel}
+                      {userActions}
+                  </div>
+                </div>
+              </div>
                 {share}
             </div>
         );

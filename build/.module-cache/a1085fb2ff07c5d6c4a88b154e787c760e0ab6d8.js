@@ -259,7 +259,7 @@ var Message = React.createClass({displayName: "Message",
                     React.createElement("h1", {className: "title"}, "Spotifymessage")
                   )
                 ), 
-                React.createElement("div", {className: "sm_section arrow"}, 
+                React.createElement("div", {className: "sm_section"}, 
                   React.createElement("textarea", {placeholder: "Type your spotify message here (maximum 15 words).", className: "form-control", 
                             ref: "keywordsearch", 
                             onChange: this.handleMessageTextChange, onKeyDown: this.checkForShortcut}

@@ -47,12 +47,12 @@ var Share = React.createClass({
 					<button type="button" className="btn btn-success">Share on Facebook</button>
 				</div>
 				<div className="input-group" style={{marginTop: "5px"}} >
-                    <input type="text" className="form-control" readOnly defaultValue={this.props.url} ref="urlcontainer"/>	
-                    <span className="input-group-btn">
+					<input type="text" className="form-control" readOnly defaultValue={this.props.url} ref="urlcontainer"/>
+          <span className="input-group-btn">
 						{clipboardButton}
 						<a className="btn btn-primary" href={this.props.url}>View on Spotify</a>
-                    </span>
-                </div>
+          </span>
+        </div>
 			</div>
 		);
     }

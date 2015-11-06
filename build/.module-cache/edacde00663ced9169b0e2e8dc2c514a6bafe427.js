@@ -244,7 +244,7 @@ var Message = React.createClass({displayName: "Message",
             ) :
             null;
         var userActions = this.state.generalError ? null : (
-            React.createElement("div", {className: "input-group"}, 
+            React.createElement("div", {className: "input-group"}, "test", 
               React.createElement("input", {type: "text", className: "form-control", placeholder: "Enter a playlist name", readOnly: this.state.text.length === 0, onChange: this.handlePlaylistNameChange}), 
               React.createElement("span", {className: "input-group-btn"}, 
                 React.createElement("button", {className: "btn btn-primary", type: "button", onClick: this.getSpotifyApi, disabled: this.state.text.length === 0}, "Create playlist")
@@ -254,34 +254,24 @@ var Message = React.createClass({displayName: "Message",
         return (
             React.createElement("div", null, 
               React.createElement("div", {className: "well clearfix"}, 
-                React.createElement("div", {className: "sm_container header"}, 
-                  React.createElement("div", {className: "sm_section"}, 
-                    React.createElement("h1", {className: "title"}, "Spotifymessage")
-                  )
+                React.createElement("textarea", {placeholder: "Type your spotify message here (maximum 15 words).", className: "form-control", 
+                          ref: "keywordsearch", 
+                          onChange: this.handleMessageTextChange, onKeyDown: this.checkForShortcut}
                 ), 
-                React.createElement("div", {className: "sm_section arrow"}, 
-                  React.createElement("textarea", {placeholder: "Type your spotify message here (maximum 15 words).", className: "form-control", 
-                            ref: "keywordsearch", 
-                            onChange: this.handleMessageTextChange, onKeyDown: this.checkForShortcut}
-                  ), 
-                  marketSelector, 
-                  React.createElement("button", {className: "btn btn-primary pull-right", 
-                          onClick: this.splitInputTerm, 
-                          disabled: this.state.text.length === 0}, "Get songs for playlist"
-                  )
+                React.createElement("br", null), 
+                marketSelector, 
+                React.createElement("button", {className: "btn btn-primary pull-right", 
+                        onClick: this.splitInputTerm, 
+                        disabled: this.state.text.length === 0}, "Get songs for playlist"
                 )
               ), 
-              React.createElement("div", {className: "sm_container"}, 
-                React.createElement("div", {className: "sm_section"}, 
-                  React.createElement("div", {className: "well clearfix"}, 
-                      React.createElement("ul", {id: "react-suggested-songs", className: "clearfix list-group"}, 
-                          this.state.songs.map(this.eachSong)
-                      ), 
-                      authErrorPanel, 
-                      generalErrorPanel, 
-                      userActions
-                  )
-                )
+              React.createElement("div", {className: "well clearfix"}, 
+                  React.createElement("ul", {id: "react-suggested-songs", className: "clearfix list-group"}, 
+                      this.state.songs.map(this.eachSong)
+                  ), 
+                  authErrorPanel, 
+                  generalErrorPanel, 
+                  userActions
               ), 
                 share
             )

@@ -14,9 +14,9 @@ var Markets = React.createClass({
 	},
 	render: function() {
 		return (
-		    <select name="market-selector" defaultValue="all" onChange={this.props.handleChange} >
-                <option value="all">Do not restrict by Spotify market</option>
-                {this.state.markets.map(this.eachMarket)}
+		  <select name="market-selector" defaultValue="all" onChange={this.props.handleChange} >
+        <option value="all">Do not restrict by Spotify market</option>
+          {this.state.markets.map(this.eachMarket)}
 			</select>
 		);
 	}

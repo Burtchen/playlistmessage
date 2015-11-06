@@ -1,0 +1,84 @@
+body {
+  font-family: 'Catamaran', "Helvetica Neue", Arial, sans-serif;
+  font-size: 18px;
+  line-height: 1.5rem;
+  margin: 0;
+}
+
+h1 {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.title {
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  line-height: 5rem;
+}
+
+.sm_container {
+}
+
+.header, .btn {
+  background-color: #62838E;
+}
+
+.sm_section {
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+textarea, select, input, .btn {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 3px;
+}
+
+textarea, select, input {
+  border-color: #9CA7B3;
+  margin-bottom: 1rem;
+  padding: 5px;
+}
+
+button[disabled], input[disabled] {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.btn {
+  padding: 13px 5px;
+  margin-bottom: 1rem;
+  border: none;
+  color: #fff;
+}
+
+
+
+@media screen and (min-device-width: 800px) {
+  .sm_section {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+}
+
+
+.arrow {
+  position: relative;
+  display: block;
+  padding-left: 1rem;
+}
+
+.arrow:after {
+  content: "";
+  position: relative;
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border-right: 0.3rem solid black;
+  border-top: 0.3rem solid black;
+  transform: rotate(135deg);
+  bottom: 0;
+  left: 50%;
+}
