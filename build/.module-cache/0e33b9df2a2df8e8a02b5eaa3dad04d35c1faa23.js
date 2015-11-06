@@ -1,4 +1,4 @@
-var Message = React.createClass({
+var Message = React.createClass({displayName: "Message",
     getInitialState: function() {
         return {
             accessToken: null,
@@ -140,7 +140,7 @@ var Message = React.createClass({
     },
     eachSong: function(song) {
         return (
-            <Song title={song.title} artist={song.artist} key={song.id} status={song.status}/>
+            React.createElement(Song, {title: song.title, artist: song.artist, key: song.id, status: song.status})
         );
     },
 	checkForShortcut: function (event) {
@@ -232,48 +232,48 @@ var Message = React.createClass({
     },
     render: function() {
 		// TODO: Panel that hints at delimiters and keyboard shortcut
-		var share = this.state.playlistUrl && !this.state.generalError ? <Share url={this.state.playlistUrl} supportsCopy={this.state.supportsCopy} /> : null;
-        var marketSelector = <Markets handleChange={this.handleMarketSelectorChange}/>;
+		var share = this.state.playlistUrl && !this.state.generalError ? React.createElement(Share, {url: this.state.playlistUrl, supportsCopy: this.state.supportsCopy}) : null;
+        var marketSelector = React.createElement(Markets, {handleChange: this.handleMarketSelectorChange});
 
         var authErrorPanel = this.state.authError ? (
-            <div className="alert alert-danger">Something went wrong with the app authorization, please try again.</div>
+            React.createElement("div", {className: "alert alert-danger"}, "Something went wrong with the app authorization, please try again.")
         ) :
             null;
         var generalErrorPanel = this.state.generalError ? (
-            <div className="alert alert-danger">We're terribly sorry, but there seems to be a problem with the Spotify API. Please check back again later.</div>
+            React.createElement("div", {className: "alert alert-danger"}, "We're terribly sorry, but there seems to be a problem with the Spotify API. Please check back again later.")
             ) :
             null;
         var userActions = this.state.generalError ? null : (
-            <div className="input-group">
-                <input type="text" className="form-control" placeholder="Enter a playlist name" readOnly={this.state.text.length === 0} onChange={this.handlePlaylistNameChange} />
-                        <span className="input-group-btn">
-                            <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi} disabled={this.state.text.length === 0}>Create playlist</button>
-                        </span>
-            </div>
+            React.createElement("div", {className: "input-group"}, 
+                React.createElement("input", {type: "text", className: "form-control", placeholder: "Enter a playlist name", readOnly: this.state.text.length === 0, onChange: this.handlePlaylistNameChange}), 
+                        React.createElement("span", {className: "input-group-btn"}, 
+                            React.createElement("button", {className: "btn btn-primary", type: "button", onClick: this.getSpotifyApi, disabled: this.state.text.length === 0}, "Create playlist")
+                        )
+            )
             );
         return (
-            <div>
-                <div className="well clearfix">
-                    <textarea placeholder="Type your spotify message here (maximum 15 words)." className="form-control"
-                              ref="keywordsearch"
-                              onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
-                    </textarea>
-                    <br/>
-                    {marketSelector}
-                    <button className="btn btn-primary pull-right"
-                            onClick={this.splitInputTerm}
-                            disabled={this.state.text.length === 0}>Get songs for playlist</button>
-                </div>
-                <div className="well clearfix">
-                    <ul id="react-suggested-songs" className="clearfix list-group">
-                        {this.state.songs.map(this.eachSong)}
-                    </ul>
-                    {authErrorPanel}
-                    {generalErrorPanel}
-                    {userActions}
-                </div>
-                {share}
-            </div>
+            React.createElement("div", null, 
+                React.createElement("div", {className: "well clearfix"}, 
+                    React.createElement("textarea", {placeholder: "Type your spotify message here (maximum 15 words).", className: "form-control", 
+                              ref: "keywordsearch", 
+                              onChange: this.handleMessageTextChange, onKeyDown: this.checkForShortcut}
+                    ), 
+                    React.createElement("br", null), 
+                    marketSelector, 
+                    React.createElement("button", {className: "btn btn-primary pull-right", 
+                            onClick: this.splitInputTerm, 
+                            disabled: this.state.text.length === 0}, "Get songs for playlist")
+                ), 
+                React.createElement("div", {className: "well clearfix"}, 
+                    React.createElement("ul", {id: "react-suggested-songs", className: "clearfix list-group"}, 
+                        this.state.songs.map(this.eachSong)
+                    ), 
+                    authErrorPanel, 
+                    generalErrorPanel, 
+                    userActions
+                ), 
+                share
+            )
         );
     }
 });
