@@ -6,7 +6,7 @@ body {
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 1.6rem;
   margin: 0;
 }
 
@@ -23,6 +23,7 @@ h1 {
 
 .header, .btn {
   background-color: #62838E;
+  -webkit-font-smoothing:antialiased;
 }
 
 .sm_section {
@@ -39,30 +40,32 @@ textarea, select, input, .btn {
 textarea, select, input {
   border-color: #9CA7B3;
   margin-bottom: 1rem;
-  padding: 5px;
+  padding: 5px 10px;
 }
 
 button[disabled], input[disabled] {
   color: rgba(0, 0, 0, 0.5);
+  cursor: not-allowed;
 }
 
 .btn {
   padding: 13px 5px;
   margin-bottom: 1rem;
-  border: none;
+  border: 3px solid #62838E;
   color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  -webkit-transition: 0.2s;
+  -moz-transition: 0.2s;
+  transition: 0.2s;
+  font-weight: 600;
 }
 
-
-
-@media screen and (min-device-width: 800px) {
-  .sm_section {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 1rem;
-  }
+.btn:enabled:hover {
+  background-color: #fff;
+  color: #62838E;
+  cursor: pointer;
 }
-
 
 .arrow {
   position: relative;
@@ -80,5 +83,37 @@ button[disabled], input[disabled] {
   border-top: 0.3rem solid black;
   transform: rotate(135deg);
   bottom: 0;
-  left: 50%;
+  top: 10px;
+  left: 43%;
+}
+
+.list-group {
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.list-group-item {
+  list-style-type: none;
+}
+
+.list-group-item-warning {
+  color: #C12C2C;
+}
+
+.list-group-item-success {
+  color: #42903E;
+}
+
+@media screen and (min-device-width: 800px) {
+  .sm_section {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  h1 {
+    font-size: 2rem;
+  }
+  .arrow:after {
+    left: 46%;
+  }
 }

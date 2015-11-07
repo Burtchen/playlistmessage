@@ -275,7 +275,7 @@ var Message = React.createClass({
                 <div className="sm_section">
                   <div className="well clearfix">
                       <ul id="react-suggested-songs" className="clearfix list-group">
-                          {this.state.songs.map(this.eachSong)}
+                        {this.state.songs.map(this.eachSong)}
                       </ul>
                       {authErrorPanel}
                       {generalErrorPanel}
