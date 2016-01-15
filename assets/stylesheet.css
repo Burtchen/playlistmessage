@@ -79,8 +79,8 @@ button[disabled], input[disabled] {
   display: inline-block;
   width: 2rem;
   height: 2rem;
-  border-right: 0.3rem solid black;
-  border-top: 0.3rem solid black;
+  border-right: 0.3rem solid #62838E;
+  border-top: 0.3rem solid #62838E;
   transform: rotate(135deg);
   bottom: 0;
   top: 10px;
