@@ -3,11 +3,20 @@ body {
   font-size: 18px;
   line-height: 1.5rem;
   margin: 0;
+  color: #314247;
 }
 
 h1 {
   font-size: 1.6rem;
   margin: 0;
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+a {
+  text-decoration: none;
 }
 
 .title {
@@ -43,22 +52,35 @@ textarea, select, input {
   padding: 5px 10px;
 }
 
+label {
+  color: #62838E;
+  font-size: 14px;
+}
+
 button[disabled], input[disabled] {
   color: rgba(0, 0, 0, 0.5);
   cursor: not-allowed;
 }
 
 .btn {
-  padding: 13px 5px;
-  margin-bottom: 1rem;
+  display: block;
   border: 3px solid #62838E;
+  text-align: center;
   color: #fff;
-  text-transform: uppercase;
   letter-spacing: 1px;
   -webkit-transition: 0.2s;
   -moz-transition: 0.2s;
   transition: 0.2s;
   font-weight: 600;
+}
+
+.btn-primary {
+  padding: 13px 5px;
+  text-transform: uppercase;
+}
+
+.btn-secondary {
+  padding: 6px;
 }
 
 .btn:enabled:hover {
@@ -71,6 +93,22 @@ button[disabled], input[disabled] {
   position: relative;
   display: block;
   padding-left: 1rem;
+}
+
+.input-group-btn {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack:justify;
+  -webkit-justify-content:space-between;
+  -ms-flex-pack:justify;
+  justify-content:space-between;
+}
+
+.input-group-btn .btn {
+  width: 49%;
+  margin-bottom: 1rem;
 }
 
 .arrow:after {
@@ -89,7 +127,7 @@ button[disabled], input[disabled] {
 
 .list-group {
   padding: 0;
-  margin: 0 0 1rem;
+  margin: 0;
 }
 
 .list-group-item {
