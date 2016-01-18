@@ -247,9 +247,7 @@ var Message = React.createClass({displayName: "Message",
         var userActions = this.state.generalError ? null : (
             React.createElement("div", {className: "input-group"}, 
               React.createElement("input", {type: "text", className: "form-control", placeholder: "Enter a playlist name", readOnly: this.state.text.length === 0, onChange: this.handlePlaylistNameChange}), 
-              React.createElement("span", {className: "input-group-btn"}, 
-                React.createElement("button", {className: "btn btn-primary", type: "button", onClick: this.getSpotifyApi, disabled: this.state.text.length === 0}, "Create playlist")
-              )
+              React.createElement("button", {className: "btn btn-primary", type: "button", onClick: this.getSpotifyApi, disabled: this.state.text.length === 0}, "Create playlist")
             )
             );
         return (
