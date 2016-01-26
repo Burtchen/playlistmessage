@@ -64,7 +64,7 @@ button[disabled], input[disabled] {
 
 .btn {
   display: block;
-  border: 3px solid #62838E;
+  border: 2px solid #62838E;
   text-align: center;
   color: #fff;
   letter-spacing: 1px;
