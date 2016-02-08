@@ -10,7 +10,7 @@ var Song = React.createClass({
         if (this.props.status === "unmatched") {
             return (
                 <li className="list-group-item list-group-item-warning">
-                    We could not find any matches for &quot;{this.props.title}&quot;.
+                    We could not find any song titles matching &quot;{this.props.title}&quot;.
                 </li>
             );
         } else {
