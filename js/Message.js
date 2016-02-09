@@ -263,6 +263,15 @@ var Message = React.createClass({
                             ref="keywordsearch"
                             onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
                   </textarea>
+                  <p className="hint">
+                    Tell your message in a playlist! Just type what you want to see and we'll find songs matching your
+                    words. Use parentheses do search for whole groups of words. Then, save the playlist in your Spotify
+                    account and share it!
+                  </p>
+                  <p className="hint">
+                    Example: Heartbreaker (in the end) (nothing compares to you) stay searches for
+                    Heartbreaker, "In the end", "nothing compares to you" and stay for a four-song playlist. Give it a try!
+                  </p>
                   {marketSelector}
                   <button className="btn btn-primary pull-right"
                           onClick={this.splitInputTerm}

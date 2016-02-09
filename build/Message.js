@@ -263,6 +263,15 @@ var Message = React.createClass({displayName: "Message",
                             ref: "keywordsearch", 
                             onChange: this.handleMessageTextChange, onKeyDown: this.checkForShortcut}
                   ), 
+                  React.createElement("p", {className: "hint"}, 
+                    "Tell your message in a playlist! Just type what you want to see and we'll find songs matching your" + ' ' +
+                    "words. Use parentheses do search for whole groups of words. Then, save the playlist in your Spotify" + ' ' +
+                    "account and share it!"
+                  ), 
+                  React.createElement("p", {className: "hint"}, 
+                    "Example: Heartbreaker (in the end) (nothing compares to you) stay searches for" + ' ' +
+                    "Heartbreaker, \"In the end\", \"nothing compares to you\" and stay for a four-song playlist. Give it a try!"
+                  ), 
                   marketSelector, 
                   React.createElement("button", {className: "btn btn-primary pull-right", 
                           onClick: this.splitInputTerm, 

@@ -27,6 +27,10 @@ a {
   line-height: 5rem;
 }
 
+.hint {
+  margin: 0 0 1rem 0;
+}
+
 .sm_container {
 }
 
