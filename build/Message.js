@@ -281,12 +281,12 @@ var Message = React.createClass({displayName: "Message",
               ), 
               React.createElement("div", {className: "well clearfix"}, 
                 React.createElement("div", {className: "sm_section"}, 
-                    React.createElement("ul", {id: "react-suggested-songs", className: "clearfix list-group"}, 
-                      this.state.songs.map(this.eachSong)
-                    ), 
-                    authErrorPanel, 
-                    generalErrorPanel, 
-                    userActions
+                  React.createElement("ul", {id: "react-suggested-songs", className: "clearfix list-group"}, 
+                    this.state.songs.map(this.eachSong)
+                  ), 
+                  authErrorPanel, 
+                  generalErrorPanel, 
+                  userActions
                 )
               ), 
                 share, 

@@ -281,12 +281,12 @@ var Message = React.createClass({
               </div>
               <div className="well clearfix">
                 <div className="sm_section">
-                    <ul id="react-suggested-songs" className="clearfix list-group">
-                      {this.state.songs.map(this.eachSong)}
-                    </ul>
-                    {authErrorPanel}
-                    {generalErrorPanel}
-                    {userActions}
+                  <ul id="react-suggested-songs" className="clearfix list-group">
+                    {this.state.songs.map(this.eachSong)}
+                  </ul>
+                  {authErrorPanel}
+                  {generalErrorPanel}
+                  {userActions}
                 </div>
               </div>
                 {share}
