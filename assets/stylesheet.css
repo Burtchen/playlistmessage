@@ -1,9 +1,16 @@
+html {
+  height: 100%;
+}
+
 body {
   font-family: 'Catamaran', "Helvetica Neue", Arial, sans-serif;
   font-size: 18px;
   line-height: 1.5rem;
   margin: 0;
   color: #314247;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 h1 {
@@ -31,17 +38,54 @@ a {
   margin: 0 0 1rem 0;
 }
 
-.sm_container {
+.site_wrapper {
+  height: 100%;
 }
 
-.header, .btn {
+.site_wrapper > div {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.content_wrap {
+  flex: 1 0 auto;
+}
+
+.site_header, .btn {
   background-color: #62838E;
   -webkit-font-smoothing:antialiased;
+}
+
+.site_footer {
+  background-color: #314247;
+  font-size: .8rem;
+  text-align: center;
+  padding: 1rem 0;
+  text-transform: uppercase;
+  letter-spacing: .04rem;
+}
+
+.site_footer span {
+  padding: .5rem 1rem;
+  display: inline-block;
+}
+
+.site_footer span, .site_footer span a {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.site_footer span:hover {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .sm_section {
   margin: 0 auto;
   padding: 1rem;
+}
+
+.copyright {
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 textarea, select, input, .btn {
@@ -157,5 +201,8 @@ button[disabled], input[disabled] {
   }
   .arrow:after {
     left: 46%;
+  }
+  .site_footer span {
+    padding: .5rem 2rem;
   }
 }

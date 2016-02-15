@@ -39,28 +39,26 @@ var Share = React.createClass({
 	var mailToLink = encodeURIComponent("mailto:?subject=I have a playlist message for you&body=Hi,\n\n I created a playlist message for you. Check it out: " + this.props.url);
 		return (
 			<div className="well clearfix">
-				<div className="sm_container">
-					<div className="sm_section">
-						<h2>Great, your playlist has been created</h2>
-						<div className="btn-group" role="group" aria-label="Actions for the playlist message">
-							<div className="input-group-btn">
-								<button type="button" className="btn btn-secondary btn-success" href={mailToLink}>Email</button>
-								<button type="button" className="btn btn-secondary btn-success">Share via Whatsapp</button>
-							</div>
-							<div className="input-group-btn">
-								<button type="button" className="btn btn-secondary btn-success" onClick={this.tweet}>Tweet</button>
-								<button type="button" className="btn btn-secondary btn-success">Share on Facebook</button>
-							</div>
+				<div className="sm_section">
+					<h2>Great, your playlist has been created</h2>
+					<div className="btn-group" role="group" aria-label="Actions for the playlist message">
+						<div className="input-group-btn">
+							<button type="button" className="btn btn-secondary btn-success" href={mailToLink}>Email</button>
+							<button type="button" className="btn btn-secondary btn-success">Share via Whatsapp</button>
 						</div>
-						<div className="input-group">
-							<label>URL to your new spotify playlist</label>
-							<input type="text" className="form-control" readOnly defaultValue={this.props.url} ref="urlcontainer"/>
-		          <span className="input-group-btn">
-								{clipboardButton}
-								<button className="btn btn-secondary" href={this.props.url}>View on Spotify</button>
-		          </span>
-		        </div>
+						<div className="input-group-btn">
+							<button type="button" className="btn btn-secondary btn-success" onClick={this.tweet}>Tweet</button>
+							<button type="button" className="btn btn-secondary btn-success">Share on Facebook</button>
+						</div>
 					</div>
+					<div className="input-group">
+						<label>URL to your new spotify playlist</label>
+						<input type="text" className="form-control" readOnly defaultValue={this.props.url} ref="urlcontainer"/>
+	          <span className="input-group-btn">
+							{clipboardButton}
+							<button className="btn btn-secondary" href={this.props.url}>View on Spotify</button>
+	          </span>
+	        </div>
 				</div>
 
 			</div>

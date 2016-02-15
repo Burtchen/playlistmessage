@@ -252,12 +252,12 @@ var Message = React.createClass({displayName: "Message",
             );
         return (
             React.createElement("div", null, 
-              React.createElement("div", {className: "well clearfix"}, 
-                React.createElement("div", {className: "sm_container header"}, 
-                  React.createElement("div", {className: "sm_section"}, 
-                    React.createElement("h1", {className: "title"}, "Spotifymessage")
-                  )
-                ), 
+              React.createElement("div", {className: "site_header"}, 
+                React.createElement("div", {className: "sm_section"}, 
+                  React.createElement("h1", {className: "title"}, "Spotifymessage")
+                )
+              ), 
+              React.createElement("div", {className: "well clearfix content_wrap"}, 
                 React.createElement("div", {className: "sm_section arrow"}, 
                   React.createElement("textarea", {placeholder: "Type your spotify message here (maximum 15 words).", className: "form-control", 
                             ref: "keywordsearch", 
@@ -279,19 +279,26 @@ var Message = React.createClass({displayName: "Message",
                   )
                 )
               ), 
-              React.createElement("div", {className: "sm_container"}, 
+              React.createElement("div", {className: "well clearfix"}, 
                 React.createElement("div", {className: "sm_section"}, 
-                  React.createElement("div", {className: "well clearfix"}, 
-                      React.createElement("ul", {id: "react-suggested-songs", className: "clearfix list-group"}, 
-                        this.state.songs.map(this.eachSong)
-                      ), 
-                      authErrorPanel, 
-                      generalErrorPanel, 
-                      userActions
-                  )
+                    React.createElement("ul", {id: "react-suggested-songs", className: "clearfix list-group"}, 
+                      this.state.songs.map(this.eachSong)
+                    ), 
+                    authErrorPanel, 
+                    generalErrorPanel, 
+                    userActions
                 )
               ), 
-                share
+                share, 
+                React.createElement("footer", {className: "site_footer"}, 
+                  React.createElement("div", {className: "sm_section"}, 
+                    React.createElement("a", {href: "#"}, React.createElement("span", null, "imprint")), 
+                    React.createElement("a", {href: "#"}, React.createElement("span", null, "twitter"))
+                  ), 
+                  React.createElement("div", {className: "sm_section copyright"}, 
+                    React.createElement("span", null, "©Copyright 2016")
+                  )
+                )
             )
         );
     }

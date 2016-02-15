@@ -252,12 +252,12 @@ var Message = React.createClass({
             );
         return (
             <div>
-              <div className="well clearfix">
-                <div className="sm_container header">
-                  <div className="sm_section">
-                    <h1 className="title">Spotifymessage</h1>
-                  </div>
+              <div className="site_header">
+                <div className="sm_section">
+                  <h1 className="title">Spotifymessage</h1>
                 </div>
+              </div>
+              <div className="well clearfix content_wrap">
                 <div className="sm_section arrow">
                   <textarea placeholder="Type your spotify message here (maximum 15 words)." className="form-control"
                             ref="keywordsearch"
@@ -279,19 +279,26 @@ var Message = React.createClass({
                   </button>
                 </div>
               </div>
-              <div className="sm_container">
+              <div className="well clearfix">
                 <div className="sm_section">
-                  <div className="well clearfix">
-                      <ul id="react-suggested-songs" className="clearfix list-group">
-                        {this.state.songs.map(this.eachSong)}
-                      </ul>
-                      {authErrorPanel}
-                      {generalErrorPanel}
-                      {userActions}
-                  </div>
+                    <ul id="react-suggested-songs" className="clearfix list-group">
+                      {this.state.songs.map(this.eachSong)}
+                    </ul>
+                    {authErrorPanel}
+                    {generalErrorPanel}
+                    {userActions}
                 </div>
               </div>
                 {share}
+                <footer className="site_footer">
+                  <div className="sm_section">
+                    <a href="#"><span>imprint</span></a>
+                    <a href="#"><span>twitter</span></a>
+                  </div>
+                  <div className="sm_section copyright">
+                    <span>&copy;Copyright 2016</span>
+                  </div>
+                </footer>
             </div>
         );
     }
