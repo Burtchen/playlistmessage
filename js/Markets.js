@@ -1,5 +1,5 @@
-var Markets = React.createClass({
-    getInitialState: function () {
+export class Markets extends React.component {
+    getInitialState() {
         return {
             markets: [{Name: "Afghanistan", Code: "AF"}, {Name: "Åland Islands", Code: "AX"}, {
                 Name: "Albania",
@@ -267,19 +267,19 @@ var Markets = React.createClass({
                 Code: "YE"
             }, {Name: "Zambia", Code: "ZM"}, {Name: "Zimbabwe", Code: "ZW"}]
         };
-    },
+    }
 
-    shouldComponentUpdate: function () {
+    shouldComponentUpdate() {
         return false;
-    },
+    }
 
-    eachMarket: function (market) {
+    eachMarket(market) {
         return (
             <option value={market.Code}>{market.Name}></option>
 		);
-    },
+    }
 
-    render: function () {
+    render() {
         return (
             <select name="market-selector" defaultValue="all" onChange={this.props.handleChange}>
                 <option value="all">Do not restrict by Spotify market</option>
@@ -287,4 +287,4 @@ var Markets = React.createClass({
             </select>
         );
     }
-});
+}

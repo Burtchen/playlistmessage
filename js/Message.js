@@ -1,5 +1,9 @@
-var Message = React.createClass({
-    getInitialState: function () {
+import Markets from './Markets'
+import Share from './Share'
+import Song from './Song'
+
+export class Message extends React.Component {
+    getInitialState() {
         return {
             accessToken: null,
             text: '',
@@ -10,13 +14,13 @@ var Message = React.createClass({
             songs: [],
             supportsCopy: null,
         };
-    },
+    }
 
-    addSongsToPlaylist: function (playlistId, accessToken) {
+    addSongsToPlaylist(playlistId, accessToken) {
         var request = new XMLHttpRequest();
         var userId = this.state.userId;
         var uris = this.state.songs.map(value => value[uri]);
-        request.open('POST', 'https://api.spotify.com/v1/users/' + userId + '/playlists/' + playlistId + '/tracks', true);
+        request.open('POST', 'https://api.s potify.com/v1/users/' + userId + '/playlists/' + playlistId + '/tracks', true);
         request.setRequestHeader('Content-Type', 'application/json');
         request.setRequestHeader('Authorization', 'Bearer ' + accessToken);
         request.send(JSON.stringify(uris));
@@ -30,9 +34,9 @@ var Message = React.createClass({
                 }
             }
         };
-    },
+    }
 
-    createPlaylist: function () {
+    createPlaylist() {
         var that = this;
         var request = new XMLHttpRequest();
         var userId = this.state.userId;
@@ -58,9 +62,9 @@ var Message = React.createClass({
                 }
             }
         };
-    },
+    }
 
-    splitInputTerm: function () {
+    splitInputTerm() {
         var searchKeywordGroups = this.state.text.split('('); //TODO: Check the number of parentheses
         var searchKeywords = [];
         searchKeywordGroups.forEach(function (group) {
@@ -84,9 +88,9 @@ var Message = React.createClass({
         });
 
         this.setState({searchTerms: searchKeywords}, this.getSongsForPlaylist);
-    },
+    }
 
-    getSongsForPlaylist: function () {
+    getSongsForPlaylist() {
         // we're using the first user-initiated event to query for copy support
         if (this.state.supportsCopy === null) {
             this.setState({
@@ -144,8 +148,9 @@ var Message = React.createClass({
                 }
             };
         });
-    },
-    addSongsToPlaylist: function (playlistId, accessToken) {
+    }
+
+    addSongsToPlaylist(playlistId, accessToken) {
         var request = new XMLHttpRequest();
         var userId = this.state.userId;
         var uris = _.pluck(this.state.songs, "uri");
@@ -163,8 +168,9 @@ var Message = React.createClass({
                 }
             }
         };
-    },
-    createPlaylist: function () {
+    }
+
+    createPlaylist() {
         var that = this;
         var request = new XMLHttpRequest();
         var userId = this.state.userId;
@@ -189,8 +195,9 @@ var Message = React.createClass({
                 }
             }
         };
-    },
-	splitInputTerm: function () {
+    }
+
+    splitInputTerm() {
         var searchKeywordGroups = this.state.text.split("("); //TODO: Check the number of parentheses
 		var searchKeywords = [];
 		searchKeywordGroups.forEach(function (group) {
@@ -213,8 +220,9 @@ var Message = React.createClass({
 			}
 		});
 		this.setState({searchTerms: searchKeywords}, this.getSongsForPlaylist);
-	},
-    getSongsForPlaylist: function() {
+    }
+
+    getSongsForPlaylist() {
         // we're using the first user-initiated event to query for copy support
 		if (this.state.supportsCopy === null) {
 			this.setState({
@@ -271,34 +279,34 @@ var Message = React.createClass({
             request.send();
             request = null;
         });
-    },
+    }
 
-    eachSong: function (song) {
+    eachSong(song) {
         return (
             <Song title={song.title} artist={song.artist} key={song.id} status={song.status}/>
         );
-    },
+    }
 
-    checkForShortcut: function (event) {
+    checkForShortcut(event) {
         if ((event.keyCode == 10 || event.keyCode == 13) && event.ctrlKey) {
             React.findDOMNode(this.refs.keywordsearch).blur();
             this.splitInputTerm();
         }
-    },
+    }
 
-    handleMessageTextChange: function (event) {
+    handleMessageTextChange(event) {
         this.setState({text: event.target.value});
-    },
+    }
 
-    handleMarketSelectorChange: function (e) {
+    handleMarketSelectorChange(e) {
         this.setState({marketValue: e.target.value});
-    },
+    }
 
-    handlePlaylistNameChange: function (event) {
+    handlePlaylistNameChange(event) {
         this.setState({playlistTitle: event.target.value});
-    },
+    }
 
-    getSpotifyApi: function () {
+    getSpotifyApi() {
         if (this.state.accessToken && this.state.userId) {
             this.createPlaylist();
             return;
@@ -348,9 +356,9 @@ var Message = React.createClass({
             'menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=' + width + ', height=' + height + ', top=' + top + ', left=' + left
         );
 
-    },
+    }
 
-    getUserData: function () {
+    getUserData() {
         var request = new XMLHttpRequest();
         var that = this;
         request.open('GET', 'https://api.spotify.com/v1/me', true);
@@ -370,9 +378,9 @@ var Message = React.createClass({
 
         request.send();
         request = null;
-    },
+    }
 
-    render: function () {
+    render() {
         // TODO: Panel that hints at delimiters and keyboard shortcut
 
         var share = this.state.playlistUrl && !this.state.generalError ?
@@ -399,6 +407,7 @@ var Message = React.createClass({
                 </button>
             </div>
         );
+
         return (
             <div>
                 <div className="well clearfix">
@@ -436,4 +445,4 @@ var Message = React.createClass({
             </div>
         );
     }
-});
+}

@@ -1,5 +1,5 @@
-var Song = React.createClass({
-    render: function() {
+export class Song extends React.component {
+    render() {
         if (this.props.status === "pending") {
             return (
                 <li className="list-group-item list-group-item-info">
@@ -21,5 +21,4 @@ var Song = React.createClass({
             );
         }
     }
-
-});
+}

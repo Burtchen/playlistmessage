@@ -4,7 +4,33 @@ module.exports = function (grunt) {
         watch: {
             react: {
                 files: 'js/**/*.js',
-                tasks: ['babel', 'uglify'],
+                tasks: ['babel', 'uglify', 'requirejs'],
+            },
+        },
+        webpack: {
+            options: {
+                entry: "js/",
+                output: {
+                    path: "build/",
+                    filename: "bundle.js"
+                },
+                module: {
+                    loaders: [
+                        {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
+                    ]
+                },
+            },
+        },
+        requirejs: {
+            app: {
+                options: {
+                    findNestedDependencies: true,
+                    mainConfigFile: 'requirejs.config.js',
+                    baseUrl: 'build/',
+                    name: 'playlistmessage',
+                    out: 'build/playlistmessage-require.js',
+                    optimize: 'none',
+                }
             },
         },
         uglify: {
@@ -46,6 +72,9 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-babel');
+    grunt.loadNpmTasks('grunt-webpack');
     grunt.registerTask('default', ['babel']);
+    grunt.registerTask('require', ['requirejs']);
 };

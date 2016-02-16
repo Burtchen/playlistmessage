@@ -1,5 +1,5 @@
-var Share = React.createClass({
-	handleSelectAndCopy: function () {
+export class Share extends React.Component {
+	handleSelectAndCopy() {
 		var urlContainer = React.findDOMNode(this.refs.urlcontainer);
 		urlContainer.focus();
 		urlContainer.select();
@@ -11,9 +11,9 @@ var Share = React.createClass({
 				console.log('there was a problem with the clipboard operation.');
 			}
 		}
-	},
+	}
 
-	tweet: function () {
+	tweet() {
 
 		// Based on https://github.com/omarish/tweetable/
 		var originalStart = new Date();
@@ -32,9 +32,9 @@ var Share = React.createClass({
 				window.location.href = intentUrl;
 			}
 		}, lag);
-	},
+	}
 
-	render: function () {
+	render() {
 		var clipboardButton = this.props.supportsCopy ?
 			<button className='btn btn-secondary' type='button' onClick={this.handleSelectAndCopy}>Copy URL to
 				Clipboard</button> :
@@ -77,5 +77,4 @@ var Share = React.createClass({
 			</div>
 		);
     }
-
-});
+}
