@@ -394,10 +394,6 @@ export class Message extends React.Component {
 
     render() {
         // TODO: Panel that hints at delimiters and keyboard shortcut
-
-        var share = this.state.playlistUrl && !this.state.generalError ?
-            <Share url={this.state.playlistUrl} supportsCopy={this.state.supportsCopy}/> : null;
-        var marketSelector = <Markets handleChange={this.handleMarketSelectorChange}/>;
 		var share = this.state.playlistUrl && !this.state.generalError ? <Share url={this.state.playlistUrl} supportsCopy={this.state.supportsCopy} /> : null;
         var marketSelector = <Markets handleChange={this.handleMarketSelectorChange}/>;
 
@@ -412,48 +408,60 @@ export class Message extends React.Component {
             null;
         var userActions = this.state.generalError ? null : (
             <div className="input-group">
-                <input type="text" className="form-control" placeholder="Enter a playlist name"
-                       readOnly={this.state.text.length === 0} onChange={this.handlePlaylistNameChange}/>
-                <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi}
-                        disabled={this.state.text.length === 0}>Create playlist
-                </button>
+              <input type="text" className="form-control" placeholder="Enter a playlist name" readOnly={this.state.text.length === 0} onChange={this.handlePlaylistNameChange} />
+              <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi} disabled={this.state.text.length === 0}>Create playlist</button>
             </div>
         );
 
         return (
             <div>
-                <div className="well clearfix">
-                    <div className="sm_container header">
-                        <div className="sm_section">
-                            <h1 className="title">Spotifymessage</h1>
-                        </div>
-                    </div>
-                    <div className="sm_section arrow">
-                                <textarea placeholder="Type your spotify message here (maximum 15 words)."
-                                          className="form-control"
-                                          ref="keywordsearch"
-                                          onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
-                                </textarea>
-                        {marketSelector}
-                        <button className="btn btn-primary pull-right"
-                                onClick={this.splitInputTerm}
-                                disabled={this.state.text.length === 0}>Get songs for playlist
-                        </button>
-                    </div>
+              <div className="site_header">
+                <div className="sm_section">
+                  <h1 className="title">Spotifymessage</h1>
                 </div>
-                <div className="sm_container">
-                    <div className="sm_section">
-                        <div className="well clearfix">
-                            <ul id="react-suggested-songs" className="clearfix list-group">
-                                {this.state.songs.map(this.eachSong)}
-                            </ul>
-                            {authErrorPanel}
-                            {generalErrorPanel}
-                            {userActions}
-                        </div>
-                    </div>
+              </div>
+              <div className="well clearfix content_wrap">
+                <div className="sm_section arrow">
+                  <textarea placeholder="Type your spotify message here (maximum 15 words)." className="form-control"
+                            ref="keywordsearch"
+                            onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
+                  </textarea>
+                  <p className="hint">
+                    Tell your message in a playlist! Just type what you want to see and we'll find songs matching your
+                    words. Use parentheses do search for whole groups of words. Then, save the playlist in your Spotify
+                    account and share it!
+                  </p>
+                  <p className="hint">
+                    Example: Heartbreaker (in the end) (nothing compares to you) stay searches for
+                    Heartbreaker, "In the end", "nothing compares to you" and stay for a four-song playlist. Give it a try!
+                  </p>
+                  {marketSelector}
+                  <button className="btn btn-primary pull-right"
+                          onClick={this.splitInputTerm}
+                          disabled={this.state.text.length === 0}>Get songs for playlist
+                  </button>
                 </div>
+              </div>
+              <div className="well clearfix">
+                <div className="sm_section">
+                  <ul id="react-suggested-songs" className="clearfix list-group">
+                    {this.state.songs.map(this.eachSong)}
+                  </ul>
+                  {authErrorPanel}
+                  {generalErrorPanel}
+                  {userActions}
+                </div>
+              </div>
                 {share}
+                <footer className="site_footer">
+                  <div className="sm_section">
+                    <a href="#"><span>imprint</span></a>
+                    <a href="#"><span>twitter</span></a>
+                  </div>
+                  <div className="sm_section copyright">
+                    <span>&copy;Copyright 2016</span>
+                  </div>
+                </footer>
             </div>
         );
     }

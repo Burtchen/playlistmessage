@@ -38,45 +38,52 @@ export class Share extends React.Component {
 	}
 
 	render() {
-		var clipboardButton = this.props.supportsCopy ?
-			<button className='btn btn-secondary' type='button' onClick={this.handleSelectAndCopy}>Copy URL to
-				Clipboard</button> :
-			<button className='btn btn-secondary' type='button' onClick={this.handleSelectAndCopy}>Select URL</button>;
-
-		var mailToLink = encodeURIComponent('mailto:?subject=I have a playlist message for you&body=Hi,\n\n I created a playlist message for you. Check it out: ' + this.props.url);
-
+	var clipboardButton = this.props.supportsCopy ?
+		<button className="btn btn-secondary" type="button" onClick={this.handleSelectAndCopy}>Copy URL to Clipboard</button> :
+		<button className="btn btn-secondary" type="button" onClick={this.handleSelectAndCopy}>
+			<i className="fa fa-link social_icons"></i>
+			<span className="hide-on-mobile">Select URL</span>
+		</button>;
+	var mailToLink = encodeURIComponent("mailto:?subject=I have a playlist message for you&body=Hi,\n\n I created a playlist message for you. Check it out: " + this.props.url);
 		return (
-			<div className='well clearfix'>
-				<div className='sm_container'>
-					<div className='sm_section'>
-						<h2>Great, your playlist has been created</h2>
-						<div className='btn-group' role='group' aria-label='Actions for the playlist message'>
-							<div className='input-group-btn'>
-								<button type='button' className='btn btn-secondary btn-success' href={mailToLink}>
-									Email
-								</button>
-								<button type='button' className='btn btn-secondary btn-success'>Share via Whatsapp
-								</button>
-							</div>
-							<div className='input-group-btn'>
-								<button type='button' className='btn btn-secondary btn-success' onClick={this.tweet}>
-									Tweet
-								</button>
-								<button type='button' className='btn btn-secondary btn-success'>Share on Facebook
-								</button>
-							</div>
+			<div className="well clearfix">
+				<div className="sm_section">
+					<h2>Great, your playlist has been created</h2>
+					<div className="btn-group" role="group" aria-label="Actions for the playlist message">
+						<div className="input-group-btn">
+							<button type="button" className="btn btn-secondary btn-success" href={mailToLink}>
+								<i className="fa fa-envelope social_icons"></i>
+								<span className="hide-on-mobile">Email</span>
+							</button>
+							<button type="button" className="btn btn-secondary btn-success">
+								<i className="fa fa-whatsapp social_icons"></i>
+								<span className="hide-on-mobile">Share via Whatsapp</span>
+							</button>
 						</div>
-						<div className='input-group'>
-							<label>URL to your new spotify playlist</label>
-							<input type='text' className='form-control' readOnly defaultValue={this.props.url}
-								   ref='urlcontainer'/>
-                    		<span className='input-group-btn'>
-                        		{clipboardButton}
-								<button className='btn btn-secondary' href={this.props.url}>View on Spotify</button>
-                    		</span>
+						<div className="input-group-btn">
+							<button type="button" className="btn btn-secondary btn-success" onClick={this.tweet}>
+								<i className="fa fa-twitter social_icons"></i>
+								<span className="hide-on-mobile">Tweet</span>
+							</button>
+							<button type="button" className="btn btn-secondary btn-success">
+								<i className="fa fa-facebook social_icons"></i>
+								<span className="hide-on-mobile">Share on Facebook</span>
+							</button>
 						</div>
 					</div>
+					<div className="input-group">
+						<label>URL to your new spotify playlist</label>
+						<input type="text" className="form-control" readOnly defaultValue={this.props.url} ref="urlcontainer"/>
+	          <span className="input-group-btn">
+							{clipboardButton}
+							<button className="btn btn-secondary" href={this.props.url}>
+								<i className="fa fa-spotify social_icons"></i>
+								<span className="hide-on-mobile">View on Spotify</span>
+							</button>
+	          </span>
+	        </div>
 				</div>
+
 			</div>
 		);
     }
