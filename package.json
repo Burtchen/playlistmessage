@@ -7,25 +7,16 @@
   },
   "description": "An application that allows you to send messages in the form of spotify playlists.",
   "main": "index.js",
-  "watch": {
-    "build": "js/*.js"
-  },
   "scripts": {
-    "build": "jsx js build",
-    "oldwatch": "npm-watch",
-    "start": "open http://localhost:4321 & httpster -cp 4321",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "open http://localhost:4321 & httpster -cp 4321"
   },
   "author": "Christian Burtchen",
   "license": "MIT",
   "dependencies": {
     "grunt": "^0.4.5",
-    "grunt-contrib-concat": "^0.5.1",
-    "grunt-contrib-uglify": "^0.11.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-react": "^0.12.3",
     "lodash": "^4.6.0",
-    "react": "^0.14.7"
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7"
   },
   "devDependencies": {
     "babel-core": "^6.5.1",
@@ -33,16 +24,11 @@
     "babel-preset-es2015": "^6.5.0",
     "babel-preset-react": "^6.5.0",
     "expose-loader": "^0.7.1",
-    "grunt": "^0.4.5",
-    "grunt-babel": "^6.0.0",
-    "grunt-browserify": "^4.0.1",
     "grunt-cli": "^0.1.13",
-    "grunt-contrib-requirejs": "^0.4.4",
+    "grunt-contrib-cssmin": "^0.14.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-webpack": "^1.0.11",
     "load-grunt-tasks": "^3.4.0",
-    "nodemon": "^1.8.1",
-    "react": "^0.14.7",
-    "react-dom": "^0.14.7"
+    "nodemon": "^1.8.1"
   }
 }
