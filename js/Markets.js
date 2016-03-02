@@ -1,6 +1,11 @@
-export class Markets extends React.component {
-    getInitialState() {
-        return {
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+export class Markets extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
             markets: [{Name: "Afghanistan", Code: "AF"}, {Name: "Åland Islands", Code: "AX"}, {
                 Name: "Albania",
                 Code: "AL"
@@ -275,8 +280,8 @@ export class Markets extends React.component {
 
     eachMarket(market) {
         return (
-            <option value={market.Code}>{market.Name}></option>
-		);
+            <option value={market.Code} key={market.Code}>{market.Name}></option>
+        );
     }
 
     render() {

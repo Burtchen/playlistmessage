@@ -1,8 +1,8 @@
 module.exports = {
-    entry: "js/",
+    entry: ['./js/index'], // file extension after index is optional for .js files
     output: {
-        path: "build/",
-        filename: "bundle.js"
+        path: path.join(__dirname, 'dist'),
+        filename: 'bundle.js'
     },
     module: {
         loaders: [

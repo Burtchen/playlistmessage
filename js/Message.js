@@ -1,14 +1,26 @@
-import Markets from './Markets'
-import Share from './Share'
-import Song from './Song'
+var React = require('react');
+var ReactDOM = require('react-dom');
+var maxBy = require('lodash/maxBy');
+var map = require('lodash/map');
+var find = require('lodash/find');
+var filter = require('lodash/filter');
+var isEmpty = require('lodash/isEmpty');
+var isUndefined = require('lodash/isUndefined');
+var some = require('lodash/some');
+
+import {Markets} from './Markets'
+import {Share} from './Share'
+import {Song} from './Song'
 
 export class Message extends React.Component {
-    getInitialState() {
-        return {
+
+    constructor(props) {
+        super(props);
+        this.state = {
             accessToken: null,
             text: '',
             playlistTitle: 'A playlist message',
-            playlistUrl: 'www.spotify.com',
+            playlistUrl: '',
             marketValue: 'all',
             searchTerms: [],
             songs: [],
@@ -118,18 +130,18 @@ export class Message extends React.Component {
                         let songObject;
 
                         if (data.tracks && data.tracks.items) {
-                            allMatches = _.filter(data.tracks.items, function (item) {
-                                return !_.isEmpty(item.uri) && item.name.toLowerCase() === keyword.toLowerCase() &&
-                                    (that.state.marketValue === 'all' || _.contains(item.available_markets, that.state.marketValue));
+                            allMatches = filter(data.tracks.items, function (item) {
+                                return !isEmpty(item.uri) && item.name.toLowerCase() === keyword.toLowerCase() &&
+                                    (that.state.marketValue === 'all' || some(item.available_markets, that.state.marketValue));
                             });
 
-                            if (!_.isEmpty(allMatches)) {
-                                firstMatch = _.max(allMatches, function (item) {
-                                    return _.isUndefined(item.popularity) ? 0 : item.popularity;
+                            if (!isEmpty(allMatches)) {
+                                firstMatch = maxBy(allMatches, function (item) {
+                                    return isUndefined(item.popularity) ? 0 : item.popularity;
                                 });
                             }
 
-                            songObject = _.findWhere(incomingSongs, {title: keyword});
+                            songObject = find(incomingSongs, {title: keyword});
                             if (firstMatch) {
                                 songObject.status = 'match';
                                 songObject.id = firstMatch.id;
@@ -153,7 +165,7 @@ export class Message extends React.Component {
     addSongsToPlaylist(playlistId, accessToken) {
         var request = new XMLHttpRequest();
         var userId = this.state.userId;
-        var uris = _.pluck(this.state.songs, "uri");
+        var uris = map(this.state.songs, "uri");
         request.open('POST', 'https://api.spotify.com/v1/users/' + userId + '/playlists/' + playlistId + '/tracks', true);
         request.setRequestHeader('Content-Type', 'application/json');
         request.setRequestHeader("Authorization", "Bearer " + accessToken);
@@ -245,20 +257,20 @@ export class Message extends React.Component {
             request.onreadystatechange = function() {
                 if (this.readyState === 4) {
                     if (this.status >= 200 && this.status < 400) {
-                        var data = JSON.parse(this.responseText);
-                        var songObject; //TODO: let;
+                        let data = JSON.parse(this.responseText);
+                        let songObject;
                         // TODO: Multiple matches
 						if (data.tracks && data.tracks.items) {
-							allMatches = _.filter(data.tracks.items, function (item) {
-                                return !_.isEmpty(item.uri) && item.name.toLowerCase() === keyword.toLowerCase() &&
-									(that.state.marketValue === "all" || _.contains(item.available_markets, that.state.marketValue));
+                            allMatches = filter(data.tracks.items, function (item) {
+                                return !isEmpty(item.uri) && item.name.toLowerCase() === keyword.toLowerCase() &&
+                                    (that.state.marketValue === "all" || some(item.available_markets, that.state.marketValue));
 								});
-							if (!_.isEmpty(allMatches)) {
-								firstMatch = _.max(allMatches, function (item) {
-									return _.isUndefined(item.popularity) ? 0 : item.popularity;
+                            if (!isEmpty(allMatches)) {
+                                firstMatch = maxBy(allMatches, function (item) {
+                                    return isUndefined(item.popularity) ? 0 : item.popularity;
 								});
 							}
-                            songObject = _.findWhere(incomingSongs, {title: keyword});
+                            songObject = find(incomingSongs, {title: keyword});
                             if (firstMatch) {
                                 songObject.status = "match";
                                 songObject.id = firstMatch.id;

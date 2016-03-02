@@ -1,5 +1,7 @@
-//require('load-grunt-tasks')(grunt); // npm install --save-dev load-grunt-tasks
+var webpack = require('webpack');
+
 module.exports = function (grunt) {
+    var path = require('path');
     grunt.initConfig({
         watch: {
             react: {
@@ -8,17 +10,38 @@ module.exports = function (grunt) {
             },
         },
         webpack: {
-            options: {
-                entry: "js/",
+            playlistmessage: {
+                entry: ['./js/main'],
                 output: {
-                    path: "build/",
-                    filename: "bundle.js"
+                    filename: 'build/playlistmessage.js'
                 },
                 module: {
                     loaders: [
-                        {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
+                        {
+                            test: /\.js$/,
+                            loader: 'babel-loader',
+                            query: {
+                                presets: ['es2015', 'react']
+                            }
+                        },
+                        {
+                            test: require.resolve("react"),
+                            loader: "expose?React"
+                        },
                     ]
                 },
+                plugins: [
+                    new webpack.optimize.UglifyJsPlugin({
+                        compressor: {
+                            warnings: false,
+                        },
+                    }),
+                    new webpack.DefinePlugin({
+                        'process.env': {
+                            'NODE_ENV': JSON.stringify('production')
+                        }
+                    })
+                ],
             },
         },
         requirejs: {

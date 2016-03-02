@@ -1,3 +1,6 @@
+var React = require('react');
+var ReactDOM = require('react-dom');
+
 export class Share extends React.Component {
 	handleSelectAndCopy() {
 		var urlContainer = React.findDOMNode(this.refs.urlcontainer);

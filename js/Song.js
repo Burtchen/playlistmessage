@@ -1,4 +1,7 @@
-export class Song extends React.component {
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+export class Song extends React.Component {
     render() {
         if (this.props.status === "pending") {
             return (
