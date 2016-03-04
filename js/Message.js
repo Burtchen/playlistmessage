@@ -16,6 +16,17 @@ export class Message extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.splitInputTerm = this.splitInputTerm.bind(this);
+        this.getSpotifyApi = this.getSpotifyApi.bind(this);
+        this.handleMessageTextChange = this.handleMessageTextChange.bind(this);
+        this.handleMarketSelectorChange = this.handleMarketSelectorChange.bind(this);
+        this.handlePlaylistNameChange = this.handlePlaylistNameChange.bind(this);
+        this.splitInputTerm = this.splitInputTerm.bind(this);
+        this.createPlaylist = this.createPlaylist.bind(this);
+        this.getSongsForPlaylist = this.getSongsForPlaylist.bind(this);
+        this.createPlaylist = this.createPlaylist.bind(this);
+
         this.state = {
             accessToken: null,
             text: '',
@@ -66,8 +77,6 @@ export class Message extends React.Component {
                     that.setState({
                         playlistUrl: responseObject.external_urls.spotify,
                     });
-
-                    //TODO: Optimistic updating implementation
                     that.addSongsToPlaylist(responseObject.id, that.state.accessToken);
                 } else {
                     console.log('There was an error creating the playlist.');
@@ -174,7 +183,6 @@ export class Message extends React.Component {
             if (this.readyState == 4) {
                 if (this.status >= 200 && this.status < 400) {
                     var responseObject = JSON.parse(this.responseText);
-                    console.log('playlist has been filled');
                 } else {
                     console.log('yikes, an error adding stuff to the playlist');
                 }
@@ -304,6 +312,7 @@ export class Message extends React.Component {
             this.splitInputTerm();
         }
     }
+
 
     handleMessageTextChange(event) {
         this.setState({text: event.target.value});
