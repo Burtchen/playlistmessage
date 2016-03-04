@@ -280,7 +280,7 @@ export class Markets extends React.Component {
 
     eachMarket(market) {
         return (
-            <option value={market.Code} key={market.Code}>{market.Name}></option>
+            <option value={market.Code} key={market.Code}>{market.Name}</option>
         );
     }
 

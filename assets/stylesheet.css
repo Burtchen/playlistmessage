@@ -38,6 +38,10 @@ textarea, select, input {
     padding: 5px 10px;
 }
 
+textarea {
+    resize: none;
+}
+
 label {
     color: #62838E;
     font-size: 14px;

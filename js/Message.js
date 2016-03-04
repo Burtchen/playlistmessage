@@ -200,7 +200,6 @@ export class Message extends React.Component {
 					that.setState({
 						playlistUrl: responseObject.external_urls.spotify
 					});
-					//TODO: Optimistic updating implementation
                     that.addSongsToPlaylist(responseObject.id, that.state.accessToken);
                 } else {
                     console.log('There was an error creating the playlist.');
