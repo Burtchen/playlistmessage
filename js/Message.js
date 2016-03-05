@@ -425,7 +425,7 @@ export class Message extends React.Component {
             <div>
               <div className="site_header">
                 <div className="sm_section">
-                  <h1 className="title">Spotifymessage</h1>
+                    <h1 className="title">PlaylistMessage</h1>
                 </div>
               </div>
               <div className="well clearfix content_wrap">
@@ -441,7 +441,8 @@ export class Message extends React.Component {
                   </p>
                   <p className="hint">
                     Example: Heartbreaker (in the end) (nothing compares to you) stay searches for
-                    Heartbreaker, "In the end", "nothing compares to you" and stay for a four-song playlist. Give it a try!
+                      "Heartbreaker", "In the end", "nothing compares to you" and "stay" for a four-song playlist. Give
+                      it a try!
                   </p>
                   {marketSelector}
                   <button className="btn btn-primary pull-right"
