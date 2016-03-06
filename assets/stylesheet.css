@@ -159,6 +159,7 @@ button[disabled], input[disabled] {
 .list-group {
     padding: 0;
     margin: 0;
+    padding-bottom: 1rem;
 }
 
 .list-group-item {
