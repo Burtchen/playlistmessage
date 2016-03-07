@@ -423,11 +423,6 @@ export class Message extends React.Component {
 
         return (
             <div>
-              <div className="site_header">
-                <div className="sm_section">
-                    <h1 className="title">PlaylistMessage</h1>
-                </div>
-              </div>
               <div className="well clearfix content_wrap">
                 <div className="sm_section arrow">
                   <textarea placeholder="Type your spotify message here (maximum 15 words)." className="form-control"
@@ -462,15 +457,6 @@ export class Message extends React.Component {
                 </div>
               </div>
                 {share}
-                <footer className="site_footer">
-                  <div className="sm_section">
-                    <a href="#"><span>imprint</span></a>
-                    <a href="#"><span>twitter</span></a>
-                  </div>
-                  <div className="sm_section copyright">
-                    <span>&copy;Copyright 2016</span>
-                  </div>
-                </footer>
             </div>
         );
     }
