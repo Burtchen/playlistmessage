@@ -14,8 +14,13 @@ export class Share extends React.Component {
         }
     }
 
+    componentDidMount() {
+        let mainContainer = ReactDOM.findDOMNode(this.refs.sharecontainer);
+        mainContainer.scrollIntoView();
+    }
+
     handleSelectAndCopy() {
-		var urlContainer = React.findDOMNode(this.refs.urlcontainer);
+        var urlContainer = ReactDOM.findDOMNode(this.refs.urlcontainer);
 		urlContainer.focus();
 		urlContainer.select();
 		if (this.props.supportsCopy) {
@@ -65,7 +70,7 @@ export class Share extends React.Component {
             encodeURIComponent("I have a playlist message for you") + "&body=" +
             encodeURIComponent("Hi,\n\n I created a playlist message for you. Check it out: " + this.props.url);
 		return (
-            <div className="well clearfix">
+            <div className="well clearfix" ref="sharecontainer">
                 <div className="sm_section">
                     <h2>Great, your playlist has been created</h2>
                     <div className="btn-group" role="group" aria-label="Actions for the playlist message">
