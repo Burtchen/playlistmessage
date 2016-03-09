@@ -176,6 +176,10 @@ button[disabled], input[disabled] {
 
 /* HELPERS */
 
+.alert {
+    color: #C12C2C;
+}
+
 .hide-on-mobile {
     display: none;
 }

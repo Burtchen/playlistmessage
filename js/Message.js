@@ -17,6 +17,7 @@ export class Message extends React.Component {
     constructor(props) {
         super(props);
 
+        this.setGeneralError = this.setGeneralError.bind(this);
         this.splitInputTerm = this.splitInputTerm.bind(this);
         this.getSpotifyApi = this.getSpotifyApi.bind(this);
         this.handleMessageTextChange = this.handleMessageTextChange.bind(this);
@@ -39,6 +40,10 @@ export class Message extends React.Component {
         };
     }
 
+    setGeneralError() {
+        this.setState({generalError: true});
+    }
+
     addSongsToPlaylist(playlistId, accessToken) {
         var request = new XMLHttpRequest();
         var userId = this.state.userId;
@@ -51,9 +56,8 @@ export class Message extends React.Component {
             if (this.readyState == 4) {
                 if (this.status >= 200 && this.status < 400) {
                     var responseObject = JSON.parse(this.responseText);
-                    console.log('playlist has been filled');
                 } else {
-                    console.log('yikes, an error adding stuff to the playlist');
+                    this.setGeneralError();
                 }
             }
         };
@@ -79,7 +83,7 @@ export class Message extends React.Component {
                     });
                     that.addSongsToPlaylist(responseObject.id, that.state.accessToken);
                 } else {
-                    console.log('There was an error creating the playlist.');
+                    this.setGeneralError();
                 }
             }
         };
@@ -184,7 +188,7 @@ export class Message extends React.Component {
                 if (this.status >= 200 && this.status < 400) {
                     var responseObject = JSON.parse(this.responseText);
                 } else {
-                    console.log('yikes, an error adding stuff to the playlist');
+                    this.setGeneralError();
                 }
             }
         };
@@ -210,7 +214,7 @@ export class Message extends React.Component {
 					});
                     that.addSongsToPlaylist(responseObject.id, that.state.accessToken);
                 } else {
-                    console.log('There was an error creating the playlist.');
+                    that.setGeneralError();
                 }
             }
         };
@@ -390,8 +394,7 @@ export class Message extends React.Component {
                     that.setState({userId: JSON.parse(resp).id});
                     that.createPlaylist();
                 } else {
-                    console.log('yikes, an error getting the user data');
-                    that.setState({generalError: true});
+                    that.setGeneralError();
                 }
             }
         };
@@ -401,16 +404,16 @@ export class Message extends React.Component {
     }
 
     render() {
-        // TODO: Panel that hints at delimiters and keyboard shortcut
-		var share = this.state.playlistUrl && !this.state.generalError ? <Share url={this.state.playlistUrl} supportsCopy={this.state.supportsCopy} /> : null;
+        var share = this.state.playlistUrl && !this.state.generalError ?
+            <Share url={this.state.playlistUrl} supportsCopy={this.state.supportsCopy}/> : null;
         var marketSelector = <Markets handleChange={this.handleMarketSelectorChange}/>;
 
         var authErrorPanel = this.state.authError ? (
-            <div className="alert alert-danger">Something went wrong with the app authorization, please try again.</div>
+            <div className="alert">Something went wrong with the app authorization, please try again.</div>
         ) :
             null;
         var generalErrorPanel = this.state.generalError ? (
-            <div className="alert alert-danger">We're terribly sorry, but there seems to be a problem with the Spotify
+            <div className="alert">We're terribly sorry, but there seems to be a problem with the Spotify
                 API. Please check back again later.</div>
         ) :
             null;
