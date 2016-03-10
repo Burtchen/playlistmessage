@@ -55,6 +55,16 @@ export class Share extends React.Component {
 		}, lag);
 	}
 
+    get facebookButton() {
+        const facebookLink = "https://www.facebook.com/sharer/sharer.php?u=" + this.props.url;
+        return (
+            <a className="btn btn-secondary btn-success" href={facebookLink}>
+                <i className="fa fa-facebook social_icons"></i>
+                <span className="hide-on-mobile">Share on Facebook</span>
+            </a>
+        )
+    }
+
 	render() {
 	var clipboardButton = this.props.supportsCopy ?
 		<button className="btn btn-secondary" type="button" onClick={this.handleSelectAndCopy}>Copy URL to Clipboard</button> :
@@ -89,10 +99,7 @@ export class Share extends React.Component {
                                 <i className="fa fa-twitter social_icons"></i>
                                 <span className="hide-on-mobile">Tweet</span>
                             </button>
-                            <button type="button" className="btn btn-secondary btn-success">
-                                <i className="fa fa-facebook social_icons"></i>
-                                <span className="hide-on-mobile">Share on Facebook</span>
-                            </button>
+                            {this.facebookButton}
                         </div>
                     </div>
                     <div className="input-group">
