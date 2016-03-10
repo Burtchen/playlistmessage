@@ -7,6 +7,7 @@ var filter = require('lodash/filter');
 var isEmpty = require('lodash/isEmpty');
 var isUndefined = require('lodash/isUndefined');
 var some = require('lodash/some');
+var sample = require('lodash/sample');
 
 import {Markets} from './Markets'
 import {Share} from './Share'
@@ -45,145 +46,14 @@ export class Message extends React.Component {
     }
 
     addSongsToPlaylist(playlistId, accessToken) {
-        var request = new XMLHttpRequest();
-        var userId = this.state.userId;
-        var uris = this.state.songs.map(value => value[uri]);
+        const request = new XMLHttpRequest();
+        const userId = this.state.userId;
+        const uris = this.state.songs.map(value => value[uri]);
         request.open('POST', 'https://api.s potify.com/v1/users/' + userId + '/playlists/' + playlistId + '/tracks', true);
         request.setRequestHeader('Content-Type', 'application/json');
         request.setRequestHeader('Authorization', 'Bearer ' + accessToken);
         request.send(JSON.stringify(uris));
         request.onreadystatechange = function () {
-            if (this.readyState == 4) {
-                if (this.status >= 200 && this.status < 400) {
-                    var responseObject = JSON.parse(this.responseText);
-                } else {
-                    this.setGeneralError();
-                }
-            }
-        };
-    }
-
-    createPlaylist() {
-        var that = this;
-        var request = new XMLHttpRequest();
-        var userId = this.state.userId;
-        var data = {
-            name: this.state.playlistTitle,
-        };
-        request.open('POST', 'https://api.spotify.com/v1/users/' + userId + '/playlists', true);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('Authorization', 'Bearer ' + that.state.accessToken);
-        request.send(JSON.stringify(data));
-        request.onreadystatechange = function () {
-            if (this.readyState == 4) {
-                if (this.status >= 200 && this.status < 400) {
-                    var responseObject = JSON.parse(this.responseText);
-                    that.setState({
-                        playlistUrl: responseObject.external_urls.spotify,
-                    });
-                    that.addSongsToPlaylist(responseObject.id, that.state.accessToken);
-                } else {
-                    this.setGeneralError();
-                }
-            }
-        };
-    }
-
-    splitInputTerm() {
-        var searchKeywordGroups = this.state.text.split('('); //TODO: Check the number of parentheses
-        var searchKeywords = [];
-        searchKeywordGroups.forEach(function (group) {
-            if (group.indexOf(')') === -1) {
-                group.trim().split(' ').forEach(function (word) {
-                    word = word.trim().replace(/\W/g, '');
-                    if (word.length) {
-                        searchKeywords.push(word);
-                    }
-                });
-            } else {
-                var searchKeywordSplit = group.split(')');
-                searchKeywords.push(searchKeywordSplit[0].trim());
-                searchKeywordSplit[1].trim().split(' ').forEach(function (word) {
-                    word = word.trim().replace(/\W/g, '');
-                    if (word.length) {
-                        searchKeywords.push(word);
-                    }
-                });
-            }
-        });
-
-        this.setState({searchTerms: searchKeywords}, this.getSongsForPlaylist);
-    }
-
-    getSongsForPlaylist() {
-        // we're using the first user-initiated event to query for copy support
-        if (this.state.supportsCopy === null) {
-            this.setState({
-                supportsCopy: !!document.queryCommandSupported('copy'),
-            });
-        }
-
-        var that = this;
-        var incomingSongs = [];
-        var spotifySearchUrl = 'https://api.spotify.com/v1/search';
-        this.state.searchTerms.forEach(function (keyword) {
-            var request = new XMLHttpRequest();
-            incomingSongs.push({
-                title: keyword,
-                status: 'pending',
-            });
-            var allMatches;
-            var firstMatch;
-            that.setState({songs: incomingSongs});
-            request.open('GET', spotifySearchUrl + '?q=' + keyword + '&type=track', true);
-            request.onreadystatechange = function () {
-                if (this.readyState === 4) {
-                    if (this.status >= 200 && this.status < 400) {
-                        let data = JSON.parse(this.responseText);
-                        let songObject;
-
-                        if (data.tracks && data.tracks.items) {
-                            allMatches = filter(data.tracks.items, function (item) {
-                                return !isEmpty(item.uri) && item.name.toLowerCase() === keyword.toLowerCase() &&
-                                    (that.state.marketValue === 'all' || some(item.available_markets, that.state.marketValue));
-                            });
-
-                            if (!isEmpty(allMatches)) {
-                                firstMatch = maxBy(allMatches, function (item) {
-                                    return isUndefined(item.popularity) ? 0 : item.popularity;
-                                });
-                            }
-
-                            songObject = find(incomingSongs, {title: keyword});
-                            if (firstMatch) {
-                                songObject.status = 'match';
-                                songObject.id = firstMatch.id;
-                                songObject.uri = firstMatch.uri;
-                                songObject.title = firstMatch.name;
-                                songObject.artist = firstMatch.artists[0].name;
-                            } else {
-                                songObject.status = 'unmatched';
-                            }
-                        }
-
-                        that.setState({songs: incomingSongs});
-                    } else {
-                        that.setState({generalError: true});
-                    }
-                }
-            };
-        });
-    }
-
-    addSongsToPlaylist(playlistId, accessToken) {
-        var request = new XMLHttpRequest();
-        var userId = this.state.userId;
-        var uris = map(this.state.songs, "uri");
-        request.open('POST', 'https://api.spotify.com/v1/users/' + userId + '/playlists/' + playlistId + '/tracks', true);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader("Authorization", "Bearer " + accessToken);
-        request.send(JSON.stringify(uris));
-        request.onreadystatechange = function() {
             if (this.readyState == 4) {
                 if (this.status >= 200 && this.status < 400) {
                     var responseObject = JSON.parse(this.responseText);
@@ -269,7 +139,7 @@ export class Message extends React.Component {
                 if (this.readyState === 4) {
                     if (this.status >= 200 && this.status < 400) {
                         let data = JSON.parse(this.responseText);
-                        let songObject;
+                        let songObject = {};
                         // TODO: Multiple matches
 						if (data.tracks && data.tracks.items) {
                             allMatches = filter(data.tracks.items, function (item) {
@@ -289,8 +159,18 @@ export class Message extends React.Component {
                                 songObject.title = firstMatch.name;
                                 songObject.artist = firstMatch.artists[0].name;
                             } else {
+                                // if we do not have a single match, suggest a random search result
                                 songObject.status = "unmatched";
+                                const possibleSuggestions = filter(data.tracks.items, (item) => {
+                                    const containsTitle = item.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+                                    const hasNoHyphenOrParenthesis = item.name.toLowerCase().indexOf('-') === -1 && item.name.toLowerCase().indexOf('(') === -1;
+                                    return containsTitle && hasNoHyphenOrParenthesis;
+                                });
+                                songObject.suggestedTitle = sample(possibleSuggestions)['name'];
+
                             }
+                        } else {
+                            songObject.status = "unmatched";
                         }
                         that.setState({songs: incomingSongs});
                     } else {
@@ -306,7 +186,7 @@ export class Message extends React.Component {
 
     eachSong(song) {
         return (
-            <Song title={song.title} artist={song.artist} key={song.id} status={song.status}/>
+            <Song {...song} key={song.id}/>
         );
     }
 
