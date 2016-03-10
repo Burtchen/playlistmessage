@@ -297,10 +297,16 @@ export class Message extends React.Component {
                 API. Please check back again later.</div>
         ) :
             null;
+        const hasUnmatchedSongs = some(this.state.songs, {'status': 'unmatched'});
+        const hasPendingSongs = some(this.state.songs, {'status': 'pending'});
+        const submissionDisabled = hasUnmatchedSongs || hasPendingSongs || this.state.text.length === 0;
         var userActions = this.state.generalError ? null : (
             <div className="input-group">
-              <input type="text" className="form-control" placeholder="Enter a playlist name" readOnly={this.state.text.length === 0} onChange={this.handlePlaylistNameChange} />
-              <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi} disabled={this.state.text.length === 0}>Create playlist</button>
+                <input type="text" className="form-control" placeholder="Enter a playlist name"
+                       readOnly={submissionDisabled} onChange={this.handlePlaylistNameChange}/>
+                <button className="btn btn-primary" type="button" onClick={this.getSpotifyApi}
+                        disabled={submissionDisabled}>Create playlist
+                </button>
             </div>
         );
 
