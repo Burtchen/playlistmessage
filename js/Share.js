@@ -55,6 +55,18 @@ export class Share extends React.Component {
 		}, lag);
 	}
 
+    get whatsAppButton() {
+        const text = "I created a playlistmessage for you. Check it out: " + this.props.url;
+        const whatsAppLink = "whatsapp://send?text=" + encodeURIComponent(text);
+
+        return (
+            <a className="btn btn-secondary btn-success" href={whatsAppLink}>
+                <i className="fa fa-whatsapp social_icons"></i>
+                <span className="hide-on-mobile">Share via Whatsapp</span>
+            </a>
+        )
+    }
+
     get facebookButton() {
         const facebookLink = "https://www.facebook.com/sharer/sharer.php?u=" + this.props.url;
         return (
@@ -89,10 +101,7 @@ export class Share extends React.Component {
                                 <i className="fa fa-envelope social_icons"></i>
                                 <span className="hide-on-mobile">Email</span>
                             </a>
-                            <button type="button" className="btn btn-secondary btn-success">
-                                <i className="fa fa-whatsapp social_icons"></i>
-                                <span className="hide-on-mobile">Share via Whatsapp</span>
-                            </button>
+                            {this.whatsAppButton}
                         </div>
                         <div className="input-group-btn">
                             <button type="button" className="btn btn-secondary btn-success" onClick={this.tweet}>
