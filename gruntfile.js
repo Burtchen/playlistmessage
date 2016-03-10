@@ -74,4 +74,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-webpack');
     grunt.registerTask('default', ['webpack', 'cssmin']);
+    grunt.registerTask('build', ['webpack', 'cssmin', 'compress']);
 };
