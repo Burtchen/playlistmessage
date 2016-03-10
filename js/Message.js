@@ -21,6 +21,7 @@ export class Message extends React.Component {
         this.setGeneralError = this.setGeneralError.bind(this);
         this.splitInputTerm = this.splitInputTerm.bind(this);
         this.getSpotifyApi = this.getSpotifyApi.bind(this);
+        this.checkForShortcut = this.checkForShortcut.bind(this);
         this.handleMessageTextChange = this.handleMessageTextChange.bind(this);
         this.handleMarketSelectorChange = this.handleMarketSelectorChange.bind(this);
         this.handlePlaylistNameChange = this.handlePlaylistNameChange.bind(this);
@@ -191,8 +192,8 @@ export class Message extends React.Component {
     }
 
     checkForShortcut(event) {
-        if ((event.keyCode == 10 || event.keyCode == 13) && event.ctrlKey) {
-            React.findDOMNode(this.refs.keywordsearch).blur();
+        if (event.keyCode == 13 && (event.ctrlKey || event.metaKey)) {
+            ReactDOM.findDOMNode(this.refs.keywordsearch).blur();
             this.splitInputTerm();
         }
     }
