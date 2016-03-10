@@ -76,13 +76,13 @@ export class Message extends React.Component {
         request.setRequestHeader('Content-Type', 'application/json');
         request.setRequestHeader("Authorization", "Bearer " + that.state.accessToken);
         request.send(JSON.stringify(data));
-        request.onreadystatechange = function() {
+        request.onreadystatechange = function () {
             if (this.readyState == 4) {
                 if (this.status >= 200 && this.status < 400) {
                     var responseObject = JSON.parse(this.responseText);
-					that.setState({
-						playlistUrl: responseObject.external_urls.spotify
-					});
+                    that.setState({
+                        playlistUrl: responseObject.external_urls.spotify
+                    });
                     that.addSongsToPlaylist(responseObject.id, that.state.accessToken);
                 } else {
                     that.setGeneralError();
@@ -93,65 +93,65 @@ export class Message extends React.Component {
 
     splitInputTerm() {
         var searchKeywordGroups = this.state.text.split("("); //TODO: Check the number of parentheses
-		var searchKeywords = [];
-		searchKeywordGroups.forEach(function (group) {
-			if (group.indexOf(")") === -1) {
-				group.trim().split(" ").forEach(function (word) {
-					word = word.trim().replace(/\W/g, '');
-					if (word.length) {
-						searchKeywords.push(word);
-					}
-				});
-			} else {
-				var searchKeywordSplit = group.split(")");
-				searchKeywords.push(searchKeywordSplit[0].trim());
-				searchKeywordSplit[1].trim().split(" ").forEach(function (word) {
-					word = word.trim().replace(/\W/g, '');
-					if (word.length) {
-						searchKeywords.push(word);
-					}
-				});
-			}
-		});
-		this.setState({searchTerms: searchKeywords}, this.getSongsForPlaylist);
+        var searchKeywords = [];
+        searchKeywordGroups.forEach(function (group) {
+            if (group.indexOf(")") === -1) {
+                group.trim().split(" ").forEach(function (word) {
+                    word = word.trim().replace(/\W/g, '');
+                    if (word.length) {
+                        searchKeywords.push(word);
+                    }
+                });
+            } else {
+                var searchKeywordSplit = group.split(")");
+                searchKeywords.push(searchKeywordSplit[0].trim());
+                searchKeywordSplit[1].trim().split(" ").forEach(function (word) {
+                    word = word.trim().replace(/\W/g, '');
+                    if (word.length) {
+                        searchKeywords.push(word);
+                    }
+                });
+            }
+        });
+        this.setState({searchTerms: searchKeywords}, this.getSongsForPlaylist);
     }
 
     getSongsForPlaylist() {
         // we're using the first user-initiated event to query for copy support
-		if (this.state.supportsCopy === null) {
-			this.setState({
-				supportsCopy: !!document.queryCommandSupported('copy')
-			});
-		}
-		var that = this;
+        if (this.state.supportsCopy === null) {
+            this.setState({
+                supportsCopy: !!document.queryCommandSupported('copy')
+            });
+        }
+        var that = this;
         var incomingSongs = [];
         var spotifySearchUrl = "https://api.spotify.com/v1/search";
-		this.state.searchTerms.forEach(function (keyword) {
+        this.state.searchTerms.forEach(function (keyword) {
             var request = new XMLHttpRequest();
             incomingSongs.push({
                 title: keyword,
                 status: "pending"
             });
             var allMatches;
-			var firstMatch;
+            var firstMatch;
             that.setState({songs: incomingSongs});
             request.open('GET', spotifySearchUrl + "?q=" + keyword + "&type=track", true);
-            request.onreadystatechange = function() {
+            request.onreadystatechange = function () {
                 if (this.readyState === 4) {
                     if (this.status >= 200 && this.status < 400) {
                         let data = JSON.parse(this.responseText);
                         let songObject = {};
                         // TODO: Multiple matches
-						if (data.tracks && data.tracks.items) {
+                        if (data.tracks && data.tracks.items) {
                             allMatches = filter(data.tracks.items, function (item) {
                                 return !isEmpty(item.uri) && item.name.toLowerCase() === keyword.toLowerCase() &&
                                     (that.state.marketValue === "all" || some(item.available_markets, that.state.marketValue));
-								});
+                            });
                             if (!isEmpty(allMatches)) {
                                 firstMatch = maxBy(allMatches, function (item) {
                                     return isUndefined(item.popularity) ? 0 : item.popularity;
-								});
-							}
+                                });
+                            }
                             songObject = find(incomingSongs, {title: keyword});
                             if (firstMatch) {
                                 songObject.status = "match";
@@ -248,7 +248,7 @@ export class Message extends React.Component {
                         authError: false,
                     });
                     that.getUserData();
-        }
+                }
             }
 
             window.removeEventListener('message', messageCallback);
@@ -313,39 +313,40 @@ export class Message extends React.Component {
 
         return (
             <div>
-              <div className="well clearfix content_wrap">
-                <div className="sm_section arrow">
-                  <textarea placeholder="Type your spotify message here (maximum 15 words)." className="form-control"
-                            ref="keywordsearch"
-                            onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
+                <div className="well clearfix content_wrap">
+                    <div className="sm_section arrow">
+                        <p className="hint">
+                            Tell your message in a playlist! Just type and we'll find songs matching your
+                            input. Then, save the playlist in your Spotify account and share it!
+                        </p>
+                    <textarea placeholder="Type your playlist message here" className="form-control"
+                              ref="keywordsearch"
+                              onChange={this.handleMessageTextChange} onKeyDown={this.checkForShortcut}>
                   </textarea>
-                  <p className="hint">
-                    Tell your message in a playlist! Just type what you want to see and we'll find songs matching your
-                    words. Use parentheses do search for whole groups of words. Then, save the playlist in your Spotify
-                    account and share it!
-                  </p>
-                  <p className="hint">
-                    Example: Heartbreaker (in the end) (nothing compares to you) stay searches for
-                      "Heartbreaker", "In the end", "nothing compares to you" and "stay" for a four-song playlist. Give
-                      it a try!
-                  </p>
-                  {marketSelector}
-                  <button className="btn btn-primary pull-right"
-                          onClick={this.splitInputTerm}
-                          disabled={this.state.text.length === 0}>Get songs for playlist
-                  </button>
+                        <p className="hint">
+                            Use parentheses to search for groups of words. Example: Heartbreaker (nothing compares to
+                            you) stay searches for
+                            "Heartbreaker", "nothing compares to you" and "stay" for a three-song playlist message.
+                        </p>
+                        {marketSelector}
+                        <p className="hint">Restricting a market just affects whether songs can be played,
+                            not whether they can be added to a playlist message.</p>
+                        <button className="btn btn-primary pull-right"
+                                onClick={this.splitInputTerm}
+                                disabled={this.state.text.length === 0}>Get songs for playlist
+                        </button>
+                    </div>
                 </div>
-              </div>
-              <div className="well clearfix">
-                <div className="sm_section">
-                  <ul id="react-suggested-songs" className="clearfix list-group">
-                    {this.state.songs.map(this.eachSong)}
-                  </ul>
-                  {authErrorPanel}
-                  {generalErrorPanel}
-                  {userActions}
+                <div className="well clearfix">
+                    <div className="sm_section">
+                        <ul id="react-suggested-songs" className="clearfix list-group">
+                            {this.state.songs.map(this.eachSong)}
+                        </ul>
+                        {authErrorPanel}
+                        {generalErrorPanel}
+                        {userActions}
+                    </div>
                 </div>
-              </div>
                 {share}
             </div>
         );
