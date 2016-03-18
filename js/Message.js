@@ -28,7 +28,6 @@ export class Message extends React.Component {
         this.splitInputTerm = this.splitInputTerm.bind(this);
         this.createPlaylist = this.createPlaylist.bind(this);
         this.getSongsForPlaylist = this.getSongsForPlaylist.bind(this);
-        this.createPlaylist = this.createPlaylist.bind(this);
 
         this.state = {
             accessToken: null,
@@ -49,8 +48,8 @@ export class Message extends React.Component {
     addSongsToPlaylist(playlistId, accessToken) {
         const request = new XMLHttpRequest();
         const userId = this.state.userId;
-        const uris = this.state.songs.map(value => value[uri]);
-        request.open('POST', 'https://api.s potify.com/v1/users/' + userId + '/playlists/' + playlistId + '/tracks', true);
+        const uris = this.state.songs.map(value => value['uri']);
+        request.open('POST', 'https://api.spotify.com/v1/users/' + userId + '/playlists/' + playlistId + '/tracks', true);
         request.setRequestHeader('Content-Type', 'application/json');
         request.setRequestHeader('Authorization', 'Bearer ' + accessToken);
         request.send(JSON.stringify(uris));
@@ -167,7 +166,9 @@ export class Message extends React.Component {
                                     const hasNoHyphenOrParenthesis = item.name.toLowerCase().indexOf('-') === -1 && item.name.toLowerCase().indexOf('(') === -1;
                                     return containsTitle && hasNoHyphenOrParenthesis;
                                 });
-                                songObject.suggestedTitle = sample(possibleSuggestions)['name'];
+                                if (possibleSuggestions.length) {
+                                    songObject.suggestedTitle = sample(possibleSuggestions)['name'];
+                                }
 
                             }
                         } else {
@@ -219,7 +220,7 @@ export class Message extends React.Component {
 
         var that = this;
         var CLIENT_ID = '14ab7c0b9c0b4c7d982b50a0eb7f8e8a';
-        var REDIRECT_URI = 'https://www.der-burtchen.de/playlistmessage/proxy/';
+        var REDIRECT_URI = 'http://www.playlistmessage.com/proxy/';
 
         function getLoginURL(scopes) {
             return 'https://accounts.spotify.com/authorize?client_id=' + CLIENT_ID +
