@@ -20,18 +20,6 @@ module.exports = function (grunt) {
                 }
             },
         },
-        compress: {
-            main: {
-                options: {
-                    mode: 'gzip',
-                    level: 9
-                },
-                files: [
-                    {expand: true, src: ['build/*.js'], ext: '.jsgz'},
-                    {expand: true, src: ['build/*.css'], ext: '.cssgz'}
-                ]
-            }
-        },
         webpack: {
             playlistmessage: {
                 entry: ['./js/main'],
@@ -71,8 +59,6 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-webpack');
     grunt.registerTask('default', ['webpack', 'cssmin']);
-    grunt.registerTask('build', ['webpack', 'cssmin', 'compress']);
 };
