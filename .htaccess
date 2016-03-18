@@ -5,3 +5,7 @@ AddOutputFilterByType DEFLATE text/css
 AddOutputFilterByType DEFLATE application/rss+xml
 AddOutputFilterByType DEFLATE application/javascript
 AddOutputFilterByType DEFLATE application/x-javascript
+
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^www.playlistmessage.com [NC]
+RewriteRule ^(.*)$ http://playlistmessage.com/$1 [L,R=301,NC]
