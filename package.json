@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "git://bitbucket.org/burtchen/spotifymessage.git"
+    "url": "https://github.com/Burtchen/playlistmessage.git"
   },
   "description": "An application that allows you to send messages in the form of spotify playlists.",
   "main": "index.js",
