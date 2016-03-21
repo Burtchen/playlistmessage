@@ -187,9 +187,10 @@ export class Message extends React.Component {
         });
     }
 
-    eachSong(song) {
+    eachSong(song, index) {
+        const key = song.id + index;
         return (
-            <Song {...song} key={song.id}/>
+            <Song {...song} key={key}/>
         );
     }
 
