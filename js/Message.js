@@ -221,7 +221,7 @@ export class Message extends React.Component {
 
         var that = this;
         var CLIENT_ID = '14ab7c0b9c0b4c7d982b50a0eb7f8e8a';
-        var REDIRECT_URI = 'http://playlistmessage.com/proxy/';
+        var REDIRECT_URI = 'https://playlistmessage.com/proxy/';
 
         function getLoginURL(scopes) {
             return 'https://accounts.spotify.com/authorize?client_id=' + CLIENT_ID +

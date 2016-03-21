@@ -6,6 +6,10 @@ AddOutputFilterByType DEFLATE application/rss+xml
 AddOutputFilterByType DEFLATE application/javascript
 AddOutputFilterByType DEFLATE application/x-javascript
 
-RewriteEngine on
+RewriteEngine On
+
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://playlistmessage.com%{REQUEST_URI} [L,R=301,NC]
+
 RewriteCond %{HTTP_HOST} ^www.playlistmessage.com [NC]
-RewriteRule ^(.*)$ http://playlistmessage.com/$1 [L,R=301,NC]
+RewriteRule (.*) https://playlistmessage.com%{REQUEST_URI} [L,R=301,NC]

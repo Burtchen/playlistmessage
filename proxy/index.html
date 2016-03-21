@@ -15,9 +15,9 @@
                         type: 'access_token',
                         access_token: hash.access_token,
                         expires_in: hash.expires_in || 0
-                    }), 'http://playlistmessage.com/');
+                    }), 'https://playlistmessage.com/');
                 } else {
-                    window.opener.postMessage('authentification failed', 'http://playlistmessage.com');
+                    window.opener.postMessage('authentification failed', 'https://playlistmessage.com');
                 }
             }
             window.close();
