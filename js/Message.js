@@ -25,7 +25,6 @@ export class Message extends React.Component {
         this.handleMessageTextChange = this.handleMessageTextChange.bind(this);
         this.handleMarketSelectorChange = this.handleMarketSelectorChange.bind(this);
         this.handlePlaylistNameChange = this.handlePlaylistNameChange.bind(this);
-        this.splitInputTerm = this.splitInputTerm.bind(this);
         this.createPlaylist = this.createPlaylist.bind(this);
         this.getSongsForPlaylist = this.getSongsForPlaylist.bind(this);
 
@@ -48,7 +47,8 @@ export class Message extends React.Component {
     addSongsToPlaylist(playlistId, accessToken) {
         const request = new XMLHttpRequest();
         const userId = this.state.userId;
-        const uris = this.state.songs.map(value => value['uri']);
+        const that = this;
+        const uris = that.state.songs.map(value => value['uri']);
         request.open('POST', 'https://api.spotify.com/v1/users/' + userId + '/playlists/' + playlistId + '/tracks', true);
         request.setRequestHeader('Content-Type', 'application/json');
         request.setRequestHeader('Authorization', 'Bearer ' + accessToken);
@@ -58,7 +58,7 @@ export class Message extends React.Component {
                 if (this.status >= 200 && this.status < 400) {
                     var responseObject = JSON.parse(this.responseText);
                 } else {
-                    this.setGeneralError();
+                    that.setGeneralError();
                 }
             }
         };
@@ -91,8 +91,9 @@ export class Message extends React.Component {
     }
 
     splitInputTerm() {
-        var searchKeywordGroups = this.state.text.split("("); //TODO: Check the number of parentheses
-        var searchKeywords = [];
+        this.setState({playlistUrl: ''}); // clear playlist on new submission
+        const searchKeywordGroups = this.state.text.split("("); //TODO: Check the number of parentheses
+        let searchKeywords = [];
         searchKeywordGroups.forEach(function (group) {
             if (group.indexOf(")") === -1) {
                 group.trim().split(" ").forEach(function (word) {
@@ -102,7 +103,7 @@ export class Message extends React.Component {
                     }
                 });
             } else {
-                var searchKeywordSplit = group.split(")");
+                let searchKeywordSplit = group.split(")");
                 searchKeywords.push(searchKeywordSplit[0].trim());
                 searchKeywordSplit[1].trim().split(" ").forEach(function (word) {
                     word = word.trim().replace(/\W/g, '');
