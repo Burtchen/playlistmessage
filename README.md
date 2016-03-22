@@ -1,6 +1,8 @@
 # PlaylistMessage
 PlaylistMessage allows you to send short messages in the form of spotify playlists.
 
+Give it a try: [Playlistmessage.com](https://playlistmessage.com).
+
 Idea and Programming: Christian Burtchen (@burtchen). Design: Katharina Mehner (@kida).
 
 Licensed under MIT.
