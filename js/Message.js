@@ -4,6 +4,7 @@ var maxBy = require('lodash/maxBy');
 var map = require('lodash/map');
 var find = require('lodash/find');
 var filter = require('lodash/filter');
+var indexOf = require('lodash/indexOf');
 var isEmpty = require('lodash/isEmpty');
 var isUndefined = require('lodash/isUndefined');
 var some = require('lodash/some');
@@ -21,6 +22,8 @@ export class Message extends React.Component {
         this.setGeneralError = this.setGeneralError.bind(this);
         this.splitInputTerm = this.splitInputTerm.bind(this);
         this.getSpotifyApi = this.getSpotifyApi.bind(this);
+        this.changeArtist = this.changeArtist.bind(this);
+        this.eachSong = this.eachSong.bind(this);
         this.checkForShortcut = this.checkForShortcut.bind(this);
         this.handleMessageTextChange = this.handleMessageTextChange.bind(this);
         this.handleMarketSelectorChange = this.handleMarketSelectorChange.bind(this);
@@ -62,6 +65,31 @@ export class Message extends React.Component {
                 }
             }
         };
+    }
+
+    changeArtist(previousKey, event) {
+        const songs = this.state.songs;
+        const songToChange = find(songs, ['key', previousKey]);
+        const eTarget = event.target;
+        if (songToChange && songToChange.uri !== eTarget.value) {
+            const newSong = {
+                status: "match",
+                index: songToChange.index,
+                key: eTarget.value + songToChange.index,
+                uri: eTarget.value,
+                title: songToChange.title,
+                artist: eTarget.options[eTarget.selectedIndex].text,
+                allExactMatches: songToChange.allExactMatches,
+                alternativeArtists : songToChange.allExactMatches.filter(function (match) {
+                    return match.uri !== eTarget.value;
+                })
+            };
+            songs.splice(indexOf(songs, songToChange), 1, newSong);
+            this.setState({
+                songs: songs,
+                playlistUrl: ''
+            });
+        }
     }
 
     createPlaylist() {
@@ -126,7 +154,7 @@ export class Message extends React.Component {
         var that = this;
         var incomingSongs = [];
         var spotifySearchUrl = "https://api.spotify.com/v1/search";
-        this.state.searchTerms.forEach(function (keyword) {
+        this.state.searchTerms.forEach(function (keyword, index) {
             let request = new XMLHttpRequest();
             incomingSongs.push({
                 title: keyword,
@@ -139,7 +167,6 @@ export class Message extends React.Component {
                     if (this.status >= 200 && this.status < 400) {
                         let data = JSON.parse(this.responseText);
                         let songObject = {};
-                        // TODO: Multiple matches
                         if (data.tracks && data.tracks.items) {
                             let allExactMatches = filter(data.tracks.items, function (item) {
                                 return !isEmpty(item.uri) && item.name.toLowerCase() === keyword.toLowerCase() &&
@@ -152,10 +179,7 @@ export class Message extends React.Component {
                                         return isUndefined(item.popularity) ? 0 : item.popularity;
                                     });
                                     songsFromDifferentArtists = allExactMatches.filter(function (match) {
-                                        return match.id !== firstMatch.id;
-                                    });
-                                    songsFromDifferentArtists.forEach(function(song) {
-                                        //console.log(song.artists[0].name);
+                                        return match.uri !== firstMatch.uri;
                                     });
                                 } else {
                                     firstMatch = allExactMatches[0];
@@ -164,10 +188,15 @@ export class Message extends React.Component {
                             songObject = find(incomingSongs, {title: keyword});
                             if (firstMatch) {
                                 songObject.status = "match";
-                                songObject.id = firstMatch.id;
+                                songObject.index = index;
+                                songObject.key = firstMatch.uri + index;
                                 songObject.uri = firstMatch.uri;
                                 songObject.title = firstMatch.name;
                                 songObject.artist = firstMatch.artists[0].name;
+                                if (songsFromDifferentArtists) {
+                                    songObject.allExactMatches = allExactMatches;
+                                    songObject.alternativeArtists = songsFromDifferentArtists;
+                                }
                             } else {
                                 // if we do not have a single match, suggest a random search result
                                 songObject.status = "unmatched";
@@ -196,10 +225,9 @@ export class Message extends React.Component {
         });
     }
 
-    eachSong(song, index) {
-        const key = song.id ? song.id + index : index;
+    eachSong(song) {
         return (
-            <Song {...song} key={key}/>
+            <Song {...song} reactKey={song.key} changeArtist={this.changeArtist}/>
         );
     }
 

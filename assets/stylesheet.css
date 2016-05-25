@@ -38,6 +38,11 @@ textarea, select, input {
     padding: 5px 10px;
 }
 
+.playlist-message-select-artist {
+    width: auto;
+    margin-bottom: 0;
+}
+
 textarea {
     resize: none;
 }

@@ -27,9 +27,20 @@ export class Song extends React.Component {
                 );
             }
         } else {
+            let artist = this.props.artist;
+            if (this.props.alternativeArtists) {
+                const alternativeArtists = this.props.alternativeArtists.map((alternativeSong) => {
+                    return <option value={alternativeSong.uri}>{alternativeSong.artists[0].name}</option>;
+                });
+                artist = (
+                    <select className="playlist-message-select-artist" onChange={this.props.changeArtist.bind(this, this.props.reactKey)}>
+                        <option value={this.props.uri}>{this.props.artist}</option>
+                        {alternativeArtists}
+                    </select>);
+            }
             return (
                 <li className="list-group-item list-group-item-success">
-                    <strong>{this.props.title}</strong> <small>by {this.props.artist}</small>
+                    <strong>{this.props.title}</strong> <small>by {artist}</small>
                 </li>
             );
         }
