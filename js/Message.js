@@ -127,13 +127,11 @@ export class Message extends React.Component {
         var incomingSongs = [];
         var spotifySearchUrl = "https://api.spotify.com/v1/search";
         this.state.searchTerms.forEach(function (keyword) {
-            var request = new XMLHttpRequest();
+            let request = new XMLHttpRequest();
             incomingSongs.push({
                 title: keyword,
                 status: "pending"
             });
-            var allMatches;
-            var firstMatch;
             that.setState({songs: incomingSongs});
             request.open('GET', spotifySearchUrl + "?q=" + keyword + "&type=track", true);
             request.onreadystatechange = function () {
@@ -143,14 +141,25 @@ export class Message extends React.Component {
                         let songObject = {};
                         // TODO: Multiple matches
                         if (data.tracks && data.tracks.items) {
-                            allMatches = filter(data.tracks.items, function (item) {
+                            let allExactMatches = filter(data.tracks.items, function (item) {
                                 return !isEmpty(item.uri) && item.name.toLowerCase() === keyword.toLowerCase() &&
                                     (that.state.marketValue === "all" || some(item.available_markets, that.state.marketValue));
                             });
-                            if (!isEmpty(allMatches)) {
-                                firstMatch = maxBy(allMatches, function (item) {
-                                    return isUndefined(item.popularity) ? 0 : item.popularity;
-                                });
+                            let firstMatch, songsFromDifferentArtists;
+                            if (!isEmpty(allExactMatches)) {
+                                if (allExactMatches.length > 1) {
+                                    firstMatch = maxBy(allExactMatches, function (item) {
+                                        return isUndefined(item.popularity) ? 0 : item.popularity;
+                                    });
+                                    songsFromDifferentArtists = allExactMatches.filter(function (match) {
+                                        return match.id !== firstMatch.id;
+                                    });
+                                    songsFromDifferentArtists.forEach(function(song) {
+                                        //console.log(song.artists[0].name);
+                                    });
+                                } else {
+                                    firstMatch = allExactMatches[0];
+                                }
                             }
                             songObject = find(incomingSongs, {title: keyword});
                             if (firstMatch) {
@@ -188,7 +197,7 @@ export class Message extends React.Component {
     }
 
     eachSong(song, index) {
-        const key = song.id + index;
+        const key = song.id ? song.id + index : index;
         return (
             <Song {...song} key={key}/>
         );
@@ -267,14 +276,14 @@ export class Message extends React.Component {
     }
 
     getUserData() {
-        var request = new XMLHttpRequest();
-        var that = this;
+        let request = new XMLHttpRequest();
+        const that = this;
         request.open('GET', 'https://api.spotify.com/v1/me', true);
         request.setRequestHeader('Authorization', 'Bearer ' + that.state.accessToken);
         request.onreadystatechange = function () {
             if (this.readyState === 4) {
                 if (this.status >= 200 && this.status < 400) {
-                    var resp = this.responseText;
+                    const resp = this.responseText;
                     that.setState({userId: JSON.parse(resp).id});
                     that.createPlaylist();
                 } else {
