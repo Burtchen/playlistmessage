@@ -3,6 +3,7 @@ import React from "react";
 import maxBy from "lodash/maxBy";
 import find from "lodash/find";
 import filter from "lodash/filter";
+import intersection from "lodash/intersection";
 import indexOf from "lodash/indexOf";
 import isEmpty from "lodash/isEmpty";
 import some from "lodash/some";
@@ -17,6 +18,9 @@ import {
   searchForSong,
 } from "../services/spotify";
 
+const LOW_SUCCESS_WORDS = ["I", "do", "and", "you"].map((string) =>
+  string.toLowerCase()
+);
 const DEFAULT_PLAYLIST_TITLE = "A playlist message";
 const showMarketSelector = false;
 
@@ -25,7 +29,6 @@ export class Message extends React.Component {
     super(props);
 
     this.state = {
-      text: "",
       playlistTitle: DEFAULT_PLAYLIST_TITLE,
       playlistId: "",
       isPrivate: false,
@@ -101,13 +104,8 @@ export class Message extends React.Component {
     }
   }
 
-  splitInputTerm() {
-    this.setState({
-      playlistId: "",
-      playlistTitle: DEFAULT_PLAYLIST_TITLE,
-      isPrivate: false,
-    }); // clear playlist on new submission
-    const searchKeywordGroups = this.state.text.split("("); //TODO: Check the number of parentheses
+  splitInputTerm(event) {
+    const searchKeywordGroups = event.target.value.split("("); //TODO: Check the number of parentheses
     let searchKeywords = [];
     searchKeywordGroups.forEach(function (group) {
       if (group.indexOf(")") === -1) {
@@ -134,10 +132,15 @@ export class Message extends React.Component {
           });
       }
     });
-    this.setState({ searchTerms: searchKeywords }, this.getSongsForPlaylist);
+    this.setState({ searchTerms: searchKeywords });
   }
 
   getSongsForPlaylist() {
+    this.setState({
+      playlistId: "",
+      playlistTitle: DEFAULT_PLAYLIST_TITLE,
+      isPrivate: false,
+    }); // clear playlist on new submission
     // we're using the first user-initiated event to query for copy support
     if (this.state.supportsCopy === null) {
       this.setState({
@@ -154,7 +157,6 @@ export class Message extends React.Component {
       const response = await searchForSong(keyword, this.props.accessToken)
         .then((response) => response.json())
         .catch((error) => {
-          console.log(error);
           this.setGeneralError();
         });
       if (response && !response.error) {
@@ -199,11 +201,10 @@ export class Message extends React.Component {
             // todo: use levenshtein distance, offer suggestion
             songObject.status = "unmatched";
             const possibleSuggestions = filter(tracks.items, (item) => {
-              const containsTitle =
-                item.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+              const name = item.name.toLowerCase();
+              const containsTitle = name.indexOf(keyword.toLowerCase()) !== -1;
               const hasNoHyphenOrParenthesis =
-                item.name.toLowerCase().indexOf("-") === -1 &&
-                item.name.toLowerCase().indexOf("(") === -1;
+                name.indexOf("-") === -1 && name.indexOf("(") === -1;
               return containsTitle && hasNoHyphenOrParenthesis;
             });
             if (possibleSuggestions.length) {
@@ -227,12 +228,8 @@ export class Message extends React.Component {
   checkForShortcut(event) {
     if (event.keyCode === 13 && (event.ctrlKey || event.metaKey)) {
       this.searchField.current.blur();
-      this.splitInputTerm();
+      this.getSongsForPlaylist();
     }
-  }
-
-  handleMessageTextChange(event) {
-    this.setState({ text: event.target.value });
   }
 
   handleMarketSelectorChange(event) {
@@ -240,9 +237,15 @@ export class Message extends React.Component {
   }
 
   render() {
-    const hasMatchedSongs = some(this.state.songs, { status: "match" });
-    const hasUnmatchedSongs = some(this.state.songs, { status: "unmatched" });
-    const hasPendingSongs = some(this.state.songs, { status: "pending" });
+    const { isPrivate, songs, searchTerms } = this.state;
+    const hasMatchedSongs = some(songs, { status: "match" });
+    const hasUnmatchedSongs = some(songs, { status: "unmatched" });
+    const hasPendingSongs = some(songs, { status: "pending" });
+    const hasLowSuccessText =
+      intersection(
+        searchTerms.map((string) => string.toLowerCase()),
+        LOW_SUCCESS_WORDS
+      ).length > 0;
 
     return (
       <div>
@@ -253,14 +256,21 @@ export class Message extends React.Component {
             <textarea
               ref={this.searchField}
               placeholder="Type your playlist message here"
-              onChange={(event) => this.handleMessageTextChange(event)}
+              onChange={(event) => this.splitInputTerm(event)}
               onKeyDown={(event) => this.checkForShortcut(event)}
             />
+            {hasLowSuccessText && (
+              <p className="hint">
+                Your text contains single words that are not often 100% matches
+                for song titles. Try parentheses around them, like (I will) or
+                (just you).
+              </p>
+            )}
             <p className="hint">
               Use parentheses to search for groups of words.
               <br /> Example:{" "}
               <span style={{ fontWeight: 600 }}>
-                Heartbreaker (nothing compares to you) stay
+                Heartbreaker (don't leave) stay
               </span>
               .
             </p>
@@ -277,8 +287,8 @@ export class Message extends React.Component {
             )}
             <button
               className="btn btn-primary pull-right"
-              onClick={() => this.splitInputTerm()}
-              disabled={this.state.text.length === 0}
+              onClick={() => this.getSongsForPlaylist()}
+              disabled={this.state.searchTerms.length === 0}
             >
               Get songs for playlist
             </button>
@@ -322,10 +332,8 @@ export class Message extends React.Component {
                 <input
                   type="checkbox"
                   id="privateplaylist"
-                  value={this.state.isPrivate}
-                  onChange={() =>
-                    this.setState({ isPrivate: !this.state.isPrivate })
-                  }
+                  value={isPrivate}
+                  onChange={() => this.setState({ isPrivate: !isPrivate })}
                 />
                 <label htmlFor="privateplaylist">Make playlist private</label>
                 <button
@@ -342,7 +350,7 @@ export class Message extends React.Component {
         {this.state.playlistId && !this.state.generalError && (
           <Share
             url={`https://open.spotify.com/playlist/${this.state.playlistId}`}
-            isPrivate={this.state.isPrivate}
+            isPrivate={isPrivate}
             supportsCopy={this.state.supportsCopy}
           />
         )}
