@@ -43,9 +43,9 @@ export class Message extends React.Component {
     this.setState({ generalError: true });
   }
 
-  changeArtist(previousKey, event) {
+  changeArtist(uri, event) {
     const songs = this.state.songs;
-    const songToChange = find(songs, ["key", previousKey]);
+    const songToChange = find(songs, ["uri", uri]);
     const eTarget = event.target;
     if (songToChange && songToChange.uri !== eTarget.value) {
       const newSong = {
@@ -292,7 +292,11 @@ export class Message extends React.Component {
           >
             <ul id="react-suggested-songs" className="clearfix list-group">
               {this.state.songs.map((song, index) => (
-                <Song {...song} key={index} changeArtist={this.changeArtist} />
+                <Song
+                  {...song}
+                  key={index}
+                  changeArtist={this.changeArtist.bind(this)}
+                />
               ))}
             </ul>
             {this.state.generalError ? (

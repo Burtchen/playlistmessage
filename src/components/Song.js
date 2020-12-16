@@ -1,8 +1,9 @@
-import React from 'react';
+import React from "react";
 
 const Song = ({
   status,
   artist,
+  changeArtist,
   alternativeArtists,
   suggestedTitle,
   title,
@@ -35,7 +36,10 @@ const Song = ({
     }
   } else {
     const artistDomElement = alternativeArtists ? (
-      <select className="playlist-message-select-artist">
+      <select
+        className="playlist-message-select-artist"
+        onChange={(event) => changeArtist(uri, event)}
+      >
         <option value={uri}>{artist}</option>
         {alternativeArtists.map((alternativeSong) => (
           <option value={alternativeSong.uri} key={alternativeSong.uri}>
