@@ -26,7 +26,7 @@ export class App extends Component {
   }
 
   getSpotifyApi() {
-    const redirect_uri = window.location.href;
+    const redirect_uri = window.location.protocol + "//" + window.location.host;
     const state = new Uint32Array(16);
     // todo: check for support?
     window.crypto.getRandomValues(state);
@@ -65,6 +65,7 @@ export class App extends Component {
 
   render() {
     const hasPreviousAuth = this.state.userId !== null;
+    const hasDenied = window.location.search?.includes("access_denied");
     return (
       <div>
         <Header />
@@ -84,6 +85,12 @@ export class App extends Component {
                 }.png`}
               />
             </div>
+            {hasDenied && (
+              <p className="hint alert">
+                Once more, with feeling! You need to authorize Spotify,
+                otherwise we can't play(list message).
+              </p>
+            )}
             {hasPreviousAuth ? (
               <p className="hint" style={{ marginTop: "1rem" }}>
                 Your Spotify connection expired, click below to write another

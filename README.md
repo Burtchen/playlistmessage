@@ -29,7 +29,7 @@ Spotify does not have the rights to all songs in all its markets. Whether a part
 
 **I am done with my playlist message, can I un-authorize your application?**
 
-Sure! Revoking access will not delete any playlists, so you keep all your generated messages! You can obviously delete them too if you want. 
+Sure! Revoking access in your [account management](https://www.spotify.com/de/account/apps/) will not delete any playlists, so you keep all your generated messages! You can obviously delete them too if you want. 
 
 **I have another question that's not on here.**
 
