@@ -45,7 +45,9 @@ export class App extends Component {
   componentDidMount() {
     if (!this.state.accessToken) {
       const params = this.getHashParams();
-      this.setState({ accessToken: params.access_token }, this.setUserId);
+      if (params?.access_token) {
+        this.setState({ accessToken: params.access_token }, this.setUserId);
+      }
     }
   }
 
