@@ -1,34 +1,39 @@
 {
   "name": "playlistmessage",
-  "version": "0.1.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Burtchen/playlistmessage.git"
-  },
-  "description": "An application that allows you to send messages in the form of spotify playlists.",
-  "main": "index.js",
-  "scripts": {
-    "start": "open http://localhost:4321 & httpster -cp 4321"
-  },
-  "author": "Christian Burtchen",
+  "version": "1.0.0",
+  "private": false,
   "license": "MIT",
   "dependencies": {
-    "grunt": "^0.4.5",
-    "lodash": "^4.6.0",
-    "react": "^0.14.7",
-    "react-dom": "^0.14.7"
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "lodash": "^4.17.15",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
-    "babel-core": "^6.5.1",
-    "babel-loader": "^6.2.2",
-    "babel-preset-es2015": "^6.5.0",
-    "babel-preset-react": "^6.5.0",
-    "expose-loader": "^0.7.1",
-    "grunt-cli": "^0.1.13",
-    "grunt-contrib-cssmin": "^0.14.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-webpack": "^1.0.11",
-    "load-grunt-tasks": "^3.4.0",
-    "nodemon": "^1.8.1"
+    "prettier": "2.2.1"
   }
 }
