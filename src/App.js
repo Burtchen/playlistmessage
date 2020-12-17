@@ -71,7 +71,7 @@ export class App extends Component {
         <Header />
         {this.state.accessToken ? (
           <Message
-            refreshSession={this.setupForSessionRefresh}
+            refreshSession={() => this.setupForSessionRefresh()}
             accessToken={this.state.accessToken}
             userId={this.state.userId}
           />
