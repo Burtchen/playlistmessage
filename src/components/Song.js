@@ -4,8 +4,9 @@ const Song = ({
   status,
   artist,
   changeArtist,
+  changeSong,
   alternativeArtists,
-  suggestedTitle,
+  possibleSuggestions,
   title,
   uri,
 }) => {
@@ -16,29 +17,35 @@ const Song = ({
       </li>
     );
   }
+
   if (status === "unmatched") {
-    if (suggestedTitle) {
-      return (
-        <li className="list-group-item list-group-item-warning">
-          We could not find any exact song titles matching "{title}".
-          {suggestedTitle &&
-            `
-            Suggestion from the search results: "${suggestedTitle}".`}
-          `
-        </li>
-      );
-    } else {
-      return (
-        <li className="list-group-item list-group-item-warning">
-          We could not find any song titles matching "{title}".
-        </li>
-      );
-    }
+    return possibleSuggestions?.length ? (
+      <li className="list-group-item list-group-item-warning">
+        <strong>No matches for "{title}". </strong>{" "}
+        <select
+          className="playlist-message-select-artist"
+          onChange={(event) => changeSong(title, event)}
+        >
+          <option value={null}>Suggestions from Spotify</option>
+          {possibleSuggestions.map((suggestion) => (
+            <option value={suggestion.uri} key={suggestion.uri}>
+              {suggestion.name}
+            </option>
+          ))}
+        </select>
+      </li>
+    ) : (
+      <li className="list-group-item list-group-item-warning">
+        No matches for "{title}".
+      </li>
+    );
   } else {
     const artistDomElement = alternativeArtists ? (
       <select
         className="playlist-message-select-artist"
-        onChange={(event) => changeArtist(uri, event)}
+        onChange={function (event) {
+          return changeArtist(uri, event);
+        }}
       >
         <option value={uri}>{artist}</option>
         {alternativeArtists.map((alternativeSong) => (

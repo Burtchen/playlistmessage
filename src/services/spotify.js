@@ -1,11 +1,22 @@
-export const searchForSong = async (keyword, accessToken) =>
-  await fetch(`https://api.spotify.com/v1/search?q=${keyword}"&type=track`, {
-    method: "GET",
-    mode: "cors",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+const keywords = {};
+
+export const searchForSong = async (keyword, accessToken) => {
+  if (!keywords.hasOwnProperty(keyword)) {
+    keywords[keyword] = await fetch(
+      `https://api.spotify.com/v1/search?q=${keyword}"&type=track`,
+      {
+        method: "GET",
+        mode: "cors",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    ).then((response) => response.json());
+    return keywords[keyword];
+  } else {
+    return await Promise.resolve(keywords[keyword]);
+  }
+};
 
 export const getUserData = async (accessToken) =>
   await fetch("https://api.spotify.com/v1/me", {
