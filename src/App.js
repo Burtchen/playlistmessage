@@ -113,7 +113,7 @@ export class App extends Component {
             {!hasPreviousAuth && (
               <p className="hint" style={{ marginTop: "1rem" }}>
                 We need your permission to use your Spotify account to search
-                for songs and create public playlists. We cannot your email
+                for songs and create public playlists. We cannot use your email
                 address or any other information you do not grant access to.
               </p>
             )}
