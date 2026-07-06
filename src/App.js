@@ -5,61 +5,80 @@ import "./App.css";
 import Header from "./components/Header";
 import { Message } from "./components/Message";
 import { getUserData } from "./services/spotify";
+import {
+  beginAuth,
+  clearAuth,
+  getAccessToken,
+  getStoredAuth,
+  handleRedirectCallback,
+} from "./services/spotifyAuth";
 import Footer from "./components/Footer";
 
-const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-
-function getHashParams() {
-  const hashParams = {};
-  let e;
-  const r = /([^&;=]+)=?([^&;]*)/g;
-  const q = window.location.hash.substring(1);
-  while ((e = r.exec(q))) {
-    hashParams[e[1]] = decodeURIComponent(e[2]);
-  }
-  return hashParams;
-}
-
-function redirectToSpotifyAuth() {
-  const redirect_uri = window.location.protocol + "//" + window.location.host;
-  const state = new Uint32Array(16);
-  window.crypto.getRandomValues(state);
-  const scope = "playlist-modify-public playlist-modify-private";
-  let url = "https://accounts.spotify.com/authorize";
-  url += "?response_type=token";
-  url += "&client_id=" + encodeURIComponent(CLIENT_ID);
-  url += "&scope=" + encodeURIComponent(scope);
-  url += "&redirect_uri=" + encodeURIComponent(redirect_uri);
-  url += "&state=" + encodeURIComponent(state);
-  window.location = url;
-}
-
 export function App() {
-  const [accessToken] = useState(() => getHashParams()?.access_token ?? null);
+  const [accessToken, setAccessToken] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [authError, setAuthError] = useState(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (accessToken) {
-      getUserData(accessToken)
-        .then((r) => r.json())
-        .then((data) => setUserId(data.id));
+    (async () => {
+      try {
+        const fromRedirect = await handleRedirectCallback();
+        if (fromRedirect) {
+          setAccessToken(fromRedirect.accessToken);
+        } else if (getStoredAuth()) {
+          const token = await getAccessToken();
+          if (token) {
+            setAccessToken(token);
+          }
+        }
+      } catch (error) {
+        setAuthError(error.message);
+      } finally {
+        setReady(true);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!accessToken) {
+      return;
     }
+    getUserData(accessToken)
+      .then((r) => r.json())
+      .then((data) => setUserId(data.id))
+      .catch(() => {});
   }, [accessToken]);
 
-  function setupForSessionRefresh() {
-    setAccessToken(null);
-    window.location = window.location.href;
+  async function refreshSession() {
+    const token = await getAccessToken();
+    if (token && token !== accessToken) {
+      setAccessToken(token);
+    } else {
+      clearAuth();
+      setAccessToken(null);
+      setUserId(null);
+    }
   }
 
   const hasPreviousAuth = userId !== null;
-  const hasDenied = window.location.search?.includes("access_denied");
+  const hasDenied = authError === "access_denied";
+
+  if (!ready) {
+    return (
+      <div>
+        <Header />
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div>
       <Header />
       {accessToken ? (
         <Message
-          refreshSession={setupForSessionRefresh}
+          refreshSession={refreshSession}
           accessToken={accessToken}
           userId={userId}
         />
@@ -77,6 +96,12 @@ export function App() {
               we can't play(list message).
             </p>
           )}
+          {authError && !hasDenied && (
+            <p className="hint alert">
+              Something went wrong signing you in ({authError}). Please try
+              again.
+            </p>
+          )}
           {hasPreviousAuth ? (
             <p className="hint" style={{ marginTop: "1rem" }}>
               Your Spotify connection expired, click below to write another
@@ -89,11 +114,7 @@ export function App() {
               share it!
             </p>
           )}
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={redirectToSpotifyAuth}
-          >
+          <button className="btn btn-primary" type="button" onClick={beginAuth}>
             {hasPreviousAuth ? "Start again" : "Authorize Spotify to Start"}
           </button>
           {!hasPreviousAuth && (
