@@ -22,9 +22,4 @@ export default defineConfig({
       loader: { ".js": "jsx" },
     },
   },
-  // Temporary shim so existing `process.env.PUBLIC_URL` references keep working
-  // until they are replaced with Vite-native asset handling.
-  define: {
-    "process.env.PUBLIC_URL": '""',
-  },
 });

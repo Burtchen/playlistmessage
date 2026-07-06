@@ -7,7 +7,7 @@ import { Message } from "./components/Message";
 import { getUserData } from "./services/spotify";
 import Footer from "./components/Footer";
 
-const CLIENT_ID = "14ab7c0b9c0b4c7d982b50a0eb7f8e8a";
+const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 
 export class App extends Component {
   constructor(props) {
@@ -80,7 +80,7 @@ export class App extends Component {
             <div className="example-image-container">
               <img
                 alt="Example PlaylistMessage"
-                src={`${process.env.PUBLIC_URL}/${
+                src={`/${
                   hasPreviousAuth ? "example2" : "example"
                 }.png`}
               />
