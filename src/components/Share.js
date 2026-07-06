@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 
-export function Share({ url, isPrivate }) {
+export function Share({ url, isPrivate, providerName, providerIcon }) {
   const shareContainer = useRef(null);
   const urlInput = useRef(null);
   const [copyError, setCopyError] = useState(false);
@@ -25,9 +25,16 @@ export function Share({ url, isPrivate }) {
     }
   }
 
-  const whatsAppText = encodeURIComponent(
-    "I created a playlistmessage for you. Check it out: " + url,
-  );
+  const shareText = "I created a playlistmessage for you. Check it out: " + url;
+  const whatsAppText = encodeURIComponent(shareText);
+  const blueskyLink =
+    "https://bsky.app/intent/compose?text=" + encodeURIComponent(shareText);
+  const threadsLink =
+    "https://www.threads.net/intent/post?text=" + encodeURIComponent(shareText);
+  // Mastodon has no single share endpoint (federated) — toot.kytta.dev is a
+  // well-known instance picker that forwards the toot to the user's server.
+  const mastodonLink =
+    "https://toot.kytta.dev/?text=" + encodeURIComponent(shareText);
   const mailToLink =
     "mailto:?subject=" +
     encodeURIComponent("I have a playlist message for you") +
@@ -42,40 +49,69 @@ export function Share({ url, isPrivate }) {
         <h2>Great, your playlist has been created!</h2>
         {!isPrivate && (
           <div
-            className="btn-group"
+            className="share-grid"
             role="group"
             aria-label="Actions for the playlist message"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "0.5rem",
+              marginBottom: "1rem",
+            }}
           >
-            <div className="input-group-btn">
-              <a
-                type="button"
-                className="btn btn-secondary btn-success"
-                href={mailToLink}
-              >
-                <i className="fa fa-envelope social_icons" />
-                <span className="hide-on-mobile">Email</span>
-              </a>
-              <a
-                className="btn btn-secondary btn-success"
-                target="_blank"
-                rel="noopener noreferrer"
-                href={"whatsapp://send?text=" + whatsAppText}
-              >
-                <i className="fa fa-whatsapp social_icons" />
-                <span className="hide-on-mobile">Share via Whatsapp</span>
-              </a>
-            </div>
-            <div className="input-group-btn">
-              <a
-                className="btn btn-secondary btn-success"
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`https://www.facebook.com/sharer/sharer.php?u=${url}`}
-              >
-                <i className="fa fa-facebook social_icons" />
-                <span className="hide-on-mobile">Share on Facebook</span>
-              </a>
-            </div>
+            <a
+              type="button"
+              className="btn btn-secondary btn-success"
+              href={mailToLink}
+            >
+              <i className="fa fa-envelope social_icons" />
+              <span className="hide-on-mobile">Email</span>
+            </a>
+            <a
+              className="btn btn-secondary btn-success"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={"whatsapp://send?text=" + whatsAppText}
+            >
+              <i className="fa fa-whatsapp social_icons" />
+              <span className="hide-on-mobile">WhatsApp</span>
+            </a>
+            <a
+              className="btn btn-secondary btn-success"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={`https://www.facebook.com/sharer/sharer.php?u=${url}`}
+            >
+              <i className="fa fa-facebook social_icons" />
+              <span className="hide-on-mobile">Facebook</span>
+            </a>
+            <a
+              className="btn btn-secondary btn-success"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={blueskyLink}
+            >
+              <i className="fa fa-cloud social_icons" />
+              <span className="hide-on-mobile">Bluesky</span>
+            </a>
+            <a
+              className="btn btn-secondary btn-success"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={threadsLink}
+            >
+              <i className="fa fa-at social_icons" />
+              <span className="hide-on-mobile">Threads</span>
+            </a>
+            <a
+              className="btn btn-secondary btn-success"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={mastodonLink}
+            >
+              <i className="fa fa-paper-plane social_icons" />
+              <span className="hide-on-mobile">Mastodon</span>
+            </a>
           </div>
         )}
         <div className="input-group">
@@ -101,8 +137,8 @@ export function Share({ url, isPrivate }) {
               rel="noopener noreferrer"
               href={url}
             >
-              <i className="fa fa-spotify social_icons" />
-              <span className="hide-on-mobile">View on Spotify</span>
+              <i className={`fa ${providerIcon ?? "fa-music"} social_icons`} />
+              <span className="hide-on-mobile">View on {providerName}</span>
             </a>
           </span>
         </div>

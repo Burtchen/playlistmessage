@@ -26,6 +26,7 @@ async function withToken(fn) {
 const spotifyProvider = {
   id: "spotify",
   displayName: "Spotify",
+  brandIcon: "fa-spotify",
   playlistUrlPrefix: "https://open.spotify.com/playlist/",
 
   isSignedIn() {

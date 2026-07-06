@@ -27,6 +27,7 @@ export function Message({ provider, refreshSession }) {
   const [playlistUrl, setPlaylistUrl] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [generalError, setGeneralError] = useState(false);
+  const [creatingPlaylist, setCreatingPlaylist] = useState(false);
   const [marketValue] = useState("all");
   const [searchTerms, setSearchTerms] = useState([]);
   const [songs, setSongs] = useState([]);
@@ -96,7 +97,7 @@ export function Message({ provider, refreshSession }) {
         key: uri + songToChange.index,
         uri,
         title: replacementName,
-        artist: songToUseInstead.artists[0].name,
+        artist: songToUseInstead.artists?.[0]?.name ?? "",
         allExactMatches: null,
         alternativeArtists: null,
       };
@@ -134,6 +135,7 @@ export function Message({ provider, refreshSession }) {
   }
 
   async function createPlaylist() {
+    setCreatingPlaylist(true);
     try {
       const created = await provider.createPlaylist({
         title: playlistTitle,
@@ -150,6 +152,8 @@ export function Message({ provider, refreshSession }) {
       }
     } catch {
       setGeneralError(true);
+    } finally {
+      setCreatingPlaylist(false);
     }
   }
 
@@ -208,7 +212,7 @@ export function Message({ provider, refreshSession }) {
           key: firstMatch.uri + index,
           uri: firstMatch.uri,
           title: firstMatch.name,
-          artist: firstMatch.artists[0].name,
+          artist: firstMatch.artists?.[0]?.name ?? "",
           allExactMatches: songsFromDifferentArtists ? allExactMatches : null,
           alternativeArtists: songsFromDifferentArtists ?? null,
         };
@@ -343,15 +347,31 @@ export function Message({ provider, refreshSession }) {
                 className="btn btn-primary"
                 type="button"
                 onClick={createPlaylist}
+                disabled={creatingPlaylist}
               >
-                Create playlist
+                {creatingPlaylist ? (
+                  <>
+                    <i
+                      className="fa fa-spinner fa-spin"
+                      style={{ marginRight: "0.5rem" }}
+                    />
+                    Creating playlist…
+                  </>
+                ) : (
+                  "Create playlist"
+                )}
               </button>
             </div>
           ) : null}
         </div>
       </div>
       {playlistUrl && !generalError && (
-        <Share url={playlistUrl} isPrivate={isPrivate} />
+        <Share
+          url={playlistUrl}
+          isPrivate={isPrivate}
+          providerName={provider.displayName}
+          providerIcon={provider.brandIcon}
+        />
       )}
     </div>
   );

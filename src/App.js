@@ -100,20 +100,6 @@ export function App() {
   return (
     <div>
       <Header />
-      <div className="sm_section" style={{ paddingBottom: 0 }}>
-        <div className="btn-group" role="group" aria-label="Choose provider">
-          {PROVIDERS.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              className={`btn ${p.id === providerId ? "btn-primary" : "btn-secondary"}`}
-              onClick={() => chooseProvider(p.id)}
-            >
-              {p.displayName}
-            </button>
-          ))}
-        </div>
-      </div>
       {signedIn ? (
         <Message provider={provider} refreshSession={refreshSession} />
       ) : (
@@ -153,6 +139,27 @@ export function App() {
             account. We cannot use your email address or any other information
             you do not grant access to.
           </p>
+          <div className="sm_section" style={{ marginTop: "2rem" }}>
+            <p className="hint" style={{ marginBottom: "0.5rem" }}>
+              Prefer a different music service?
+            </p>
+            <div
+              className="btn-group"
+              role="group"
+              aria-label="Choose provider"
+            >
+              {PROVIDERS.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  className={`btn ${p.id === providerId ? "btn-primary" : "btn-secondary"}`}
+                  onClick={() => chooseProvider(p.id)}
+                >
+                  {p.displayName}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
       <Footer />

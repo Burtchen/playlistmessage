@@ -5,6 +5,7 @@
   "type": "module",
   "license": "MIT",
   "dependencies": {
+    "@tidal-music/auth": "^1.6.1",
     "fast-levenshtein": "^3.0.0",
     "lodash": "^4.17.20",
     "react": "^19.1.0",
@@ -36,6 +37,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^10.6.0",
     "eslint-plugin-react-hooks": "^7.1.1",
