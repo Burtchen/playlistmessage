@@ -57,9 +57,9 @@ export class App extends Component {
   }
 
   setUserId = async () => {
-    const responseJson = await getUserData(
-      this.state.accessToken
-    ).then((response) => response.json());
+    const responseJson = await getUserData(this.state.accessToken).then(
+      (response) => response.json(),
+    );
     this.setState({ userId: responseJson.id });
   };
 
@@ -80,9 +80,7 @@ export class App extends Component {
             <div className="example-image-container">
               <img
                 alt="Example PlaylistMessage"
-                src={`/${
-                  hasPreviousAuth ? "example2" : "example"
-                }.png`}
+                src={`/${hasPreviousAuth ? "example2" : "example"}.png`}
               />
             </div>
             {hasDenied && (

@@ -89,7 +89,7 @@ export class Share extends React.Component {
       "&body=" +
       encodeURIComponent(
         "Hi,\n\n I created a playlist message for you. Check it out: " +
-          this.props.url
+          this.props.url,
       );
     return (
       <div className="well clearfix" ref={this.shareContainer}>

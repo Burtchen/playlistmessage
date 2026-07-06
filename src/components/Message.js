@@ -22,15 +22,9 @@ import {
   searchForSong,
 } from "../services/spotify";
 
-const LOW_SUCCESS_WORDS = [
-  "I",
-  "a",
-  "do",
-  "and",
-  "you",
-  "love",
-  "the",
-].map((string) => string.toLowerCase());
+const LOW_SUCCESS_WORDS = ["I", "a", "do", "and", "you", "love", "the"].map(
+  (string) => string.toLowerCase(),
+);
 const DEFAULT_PLAYLIST_TITLE = "A playlist message";
 const showMarketSelector = false;
 
@@ -77,7 +71,7 @@ export class Message extends React.Component {
       new RegExp(title, "g"),
       songToUseInstead.name.indexOf(" ") !== -1
         ? `(${songToUseInstead.name})`
-        : songToUseInstead.name
+        : songToUseInstead.name,
     );
     const newSongArray = cloneDeep(songs);
     newSongArray[songIndex] = newSong;
@@ -103,7 +97,7 @@ export class Message extends React.Component {
         artist: target.options[target.selectedIndex].text,
         allExactMatches: songToChange.allExactMatches,
         alternativeArtists: songToChange.allExactMatches.filter(
-          (match) => match.uri !== target.value
+          (match) => match.uri !== target.value,
         ),
       };
       const songIndex = indexOf(songs, songToChange);
@@ -123,7 +117,7 @@ export class Message extends React.Component {
       userId,
       playlistTitle,
       !isPrivate,
-      accessToken
+      accessToken,
     )
       .then((response) => response.json())
       .catch((error) => {
@@ -136,7 +130,7 @@ export class Message extends React.Component {
       userId,
       id,
       uris,
-      accessToken
+      accessToken,
     )
       .then((response) => response.json())
       .catch((error) => {
@@ -206,7 +200,7 @@ export class Message extends React.Component {
       this.setState({ songs: incomingSongs });
       const response = await searchForSong(
         keyword,
-        this.props.accessToken
+        this.props.accessToken,
       ).catch((error) => {
         this.setGeneralError();
       });
@@ -220,17 +214,17 @@ export class Message extends React.Component {
               !isEmpty(item.uri) &&
               item.name.toLowerCase() === keyword.toLowerCase() &&
               (this.state.marketValue === "all" ||
-                some(item.available_markets, this.state.marketValue))
+                some(item.available_markets, this.state.marketValue)),
           );
           let firstMatch, songsFromDifferentArtists;
           if (!isEmpty(allExactMatches)) {
             if (allExactMatches?.length > 1) {
               firstMatch = maxBy(allExactMatches, "popularity");
-              songsFromDifferentArtists = allExactMatches.filter(function (
-                match
-              ) {
-                return match.uri !== firstMatch.uri;
-              });
+              songsFromDifferentArtists = allExactMatches.filter(
+                function (match) {
+                  return match.uri !== firstMatch.uri;
+                },
+              );
             } else {
               firstMatch = allExactMatches[0];
             }
@@ -265,7 +259,7 @@ export class Message extends React.Component {
             if (possibleSuggestions.length) {
               songObject.possibleSuggestions = sortBy(
                 uniqBy(possibleSuggestions, (item) => item.name.toLowerCase()),
-                (item) => levenshtein.get(item.name, keyword)
+                (item) => levenshtein.get(item.name, keyword),
               );
             }
           }
@@ -302,7 +296,7 @@ export class Message extends React.Component {
     const hasLowSuccessText =
       intersection(
         searchTerms.map((string) => string.toLowerCase()),
-        LOW_SUCCESS_WORDS
+        LOW_SUCCESS_WORDS,
       ).length > 0;
 
     return (

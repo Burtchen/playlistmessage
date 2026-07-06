@@ -4,7 +4,7 @@ export const searchForSong = async (keyword, accessToken) => {
   if (!keywords.hasOwnProperty(keyword)) {
     keywords[keyword] = await fetch(
       `https://api.spotify.com/v1/search?q=${encodeURIComponent(
-        keyword
+        keyword,
       )}&type=track`,
       {
         method: "GET",
@@ -12,7 +12,7 @@ export const searchForSong = async (keyword, accessToken) => {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-      }
+      },
     ).then((response) => response.json());
     return keywords[keyword];
   } else {
@@ -33,7 +33,7 @@ export const createEmptyPlaylist = async (
   userId,
   name = "",
   isPublic = true,
-  accessToken
+  accessToken,
 ) =>
   await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
     method: "POST",
@@ -48,7 +48,7 @@ export const addSongsToPlaylist = async (
   userId,
   playlistId,
   uris,
-  accessToken
+  accessToken,
 ) =>
   await fetch(
     `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`,
@@ -59,5 +59,5 @@ export const addSongsToPlaylist = async (
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({ uris }),
-    }
+    },
   );

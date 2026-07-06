@@ -43,7 +43,7 @@ input {
   padding: 5px 10px;
 }
 
-input[type=checkbox] {
+input[type="checkbox"] {
   width: auto;
   margin-right: 0.5rem;
 }
@@ -262,7 +262,7 @@ input[disabled] {
 }
 
 .example-image-container {
-  background-color: #2F1612;
+  background-color: #2f1612;
   display: flex;
   justify-content: center;
 }
