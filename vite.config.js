@@ -22,4 +22,9 @@ export default defineConfig({
       loader: { ".js": "jsx" },
     },
   },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: "./src/setupTests.js",
+  },
 });
