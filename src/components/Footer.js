@@ -12,7 +12,7 @@ const Footer = () => (
     </div>
     <div className="sm_section copyright">
       <span>
-        © Copyright 2016-2020 Christian Burtchen. Original design by Katharina Mehner.
+        © Copyright 2016-2026 Christian Burtchen. Original design by Katharina Mehner.
         Source code is under MIT License.
       </span>
     </div>
