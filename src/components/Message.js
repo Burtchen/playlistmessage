@@ -342,7 +342,11 @@ export function Message({ provider, refreshSession }) {
                 checked={isPrivate}
                 onChange={() => setIsPrivate((v) => !v)}
               />
-              <label htmlFor="privateplaylist">Make playlist private</label>
+              <label htmlFor="privateplaylist">
+                {provider.id === "tidal"
+                  ? "Make playlist unlisted"
+                  : "Make playlist private"}
+              </label>
               <button
                 className="btn btn-primary"
                 type="button"
