@@ -3,7 +3,9 @@ const keywords = {};
 export const searchForSong = async (keyword, accessToken) => {
   if (!keywords.hasOwnProperty(keyword)) {
     keywords[keyword] = await fetch(
-      `https://api.spotify.com/v1/search?q=${keyword}"&type=track`,
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+        keyword
+      )}&type=track`,
       {
         method: "GET",
         mode: "cors",
