@@ -15,6 +15,7 @@ export default [
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      curly: ["error", "all"],
     },
   },
   {

@@ -78,9 +78,13 @@ export function Message({ accessToken, userId, refreshSession }) {
   function changeSong(title, event) {
     const uri = event.target.value;
     const songToChange = find(songs, ["title", title]);
-    if (!songToChange) return;
+    if (!songToChange) {
+      return;
+    }
     const songToUseInstead = find(songToChange.possibleSuggestions, { uri });
-    if (!songToUseInstead) return;
+    if (!songToUseInstead) {
+      return;
+    }
     const songIndex = indexOf(songs, songToChange);
     const replacementName = songToUseInstead.name;
     const replacementInText =
@@ -112,7 +116,9 @@ export function Message({ accessToken, userId, refreshSession }) {
     const { target } = event;
     setSongs((prevSongs) => {
       const songToChange = find(prevSongs, { uri });
-      if (!songToChange || songToChange.uri === target.value) return prevSongs;
+      if (!songToChange || songToChange.uri === target.value) {
+        return prevSongs;
+      }
       const songIndex = indexOf(prevSongs, songToChange);
       const next = [...prevSongs];
       next[songIndex] = {
