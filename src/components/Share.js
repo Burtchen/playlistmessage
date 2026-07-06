@@ -79,7 +79,7 @@ export function Share({ url, isPrivate }) {
           </div>
         )}
         <div className="input-group">
-          <label>URL to your new Spotify playlist:</label>
+          <label>URL to your new playlist:</label>
           <input
             type="text"
             className="form-control"

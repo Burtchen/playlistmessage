@@ -4,70 +4,94 @@ import "./App.css";
 
 import Header from "./components/Header";
 import { Message } from "./components/Message";
-import { getUserData } from "./services/spotify";
-import {
-  beginAuth,
-  clearAuth,
-  getAccessToken,
-  getStoredAuth,
-  handleRedirectCallback,
-} from "./services/spotifyAuth";
 import Footer from "./components/Footer";
+import { PROVIDERS, getProvider } from "./providers";
+
+const LAST_PROVIDER_KEY = "playlistmessage.lastProvider";
 
 export function App() {
-  const [accessToken, setAccessToken] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [providerId, setProviderId] = useState(
+    () => window.localStorage.getItem(LAST_PROVIDER_KEY) ?? "spotify",
+  );
+  const provider = getProvider(providerId);
+
+  const [signedIn, setSignedIn] = useState(false);
+  const [user, setUser] = useState(null);
   const [authError, setAuthError] = useState(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       try {
-        const fromRedirect = await handleRedirectCallback();
-        if (fromRedirect) {
-          setAccessToken(fromRedirect.accessToken);
-        } else if (getStoredAuth()) {
-          const token = await getAccessToken();
-          if (token) {
-            setAccessToken(token);
-          }
+        const result = await provider.handleRedirectCallback();
+        if (cancelled) {
+          return;
+        }
+        if (result.error) {
+          setAuthError(result.error);
+        }
+        const isSignedIn =
+          result.signedIn || (await provider.refresh().catch(() => false));
+        if (!cancelled) {
+          setSignedIn(isSignedIn);
+          setReady(true);
         }
       } catch (error) {
-        setAuthError(error.message);
-      } finally {
-        setReady(true);
+        if (!cancelled) {
+          setAuthError(error.message);
+          setReady(true);
+        }
       }
     })();
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [providerId]);
 
   useEffect(() => {
-    if (!accessToken) {
+    if (!signedIn) {
       return;
     }
-    getUserData(accessToken)
-      .then((r) => r.json())
-      .then((data) => setUserId(data.id))
+    provider
+      .getUser()
+      .then((u) => setUser(u))
       .catch(() => {});
-  }, [accessToken]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signedIn, providerId]);
+
+  function chooseProvider(id) {
+    if (id === providerId) {
+      return;
+    }
+    setProviderId(id);
+    window.localStorage.setItem(LAST_PROVIDER_KEY, id);
+    setSignedIn(false);
+    setUser(null);
+    setAuthError(null);
+    setReady(false);
+  }
 
   async function refreshSession() {
-    const token = await getAccessToken();
-    if (token && token !== accessToken) {
-      setAccessToken(token);
-    } else {
-      clearAuth();
-      setAccessToken(null);
-      setUserId(null);
+    const ok = await provider.refresh();
+    if (!ok) {
+      provider.signOut();
+      setSignedIn(false);
+      setUser(null);
     }
   }
 
-  const hasPreviousAuth = userId !== null;
+  const hasPreviousAuth = user !== null;
   const hasDenied = authError === "access_denied";
 
   if (!ready) {
     return (
       <div>
         <Header />
+        <div className="sm_section">
+          <p className="hint">Signing you in…</p>
+        </div>
         <Footer />
       </div>
     );
@@ -76,12 +100,22 @@ export function App() {
   return (
     <div>
       <Header />
-      {accessToken ? (
-        <Message
-          refreshSession={refreshSession}
-          accessToken={accessToken}
-          userId={userId}
-        />
+      <div className="sm_section" style={{ paddingBottom: 0 }}>
+        <div className="btn-group" role="group" aria-label="Choose provider">
+          {PROVIDERS.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              className={`btn ${p.id === providerId ? "btn-primary" : "btn-secondary"}`}
+              onClick={() => chooseProvider(p.id)}
+            >
+              {p.displayName}
+            </button>
+          ))}
+        </div>
+      </div>
+      {signedIn ? (
+        <Message provider={provider} refreshSession={refreshSession} />
       ) : (
         <div className="sm_section">
           <div className="example-image-container">
@@ -92,8 +126,8 @@ export function App() {
           </div>
           {hasDenied && (
             <p className="hint alert">
-              Once more, with feeling! You need to authorize Spotify, otherwise
-              we can't play(list message).
+              Once more, with feeling! You need to authorize{" "}
+              {provider.displayName}, otherwise we can't play(list message).
             </p>
           )}
           {authError && !hasDenied && (
@@ -102,28 +136,23 @@ export function App() {
               again.
             </p>
           )}
-          {hasPreviousAuth ? (
-            <p className="hint" style={{ marginTop: "1rem" }}>
-              Your Spotify connection expired, click below to write another
-              playlist message.
-            </p>
-          ) : (
-            <p className="hint">
-              Say it with a playlist! Just type and we'll find songs matching
-              your input. Then, save the playlist in your Spotify account and
-              share it!
-            </p>
-          )}
-          <button className="btn btn-primary" type="button" onClick={beginAuth}>
-            {hasPreviousAuth ? "Start again" : "Authorize Spotify to Start"}
+          <p className="hint">
+            Say it with a playlist! Just type and we'll find songs matching your
+            input. Then, save the playlist in your {provider.displayName}{" "}
+            account and share it!
+          </p>
+          <button
+            className="btn btn-primary"
+            type="button"
+            onClick={() => provider.beginSignIn()}
+          >
+            {`Authorize ${provider.displayName} to Start`}
           </button>
-          {!hasPreviousAuth && (
-            <p className="hint" style={{ marginTop: "1rem" }}>
-              We need your permission to use your Spotify account to search for
-              songs and create public playlists. We cannot use your email
-              address or any other information you do not grant access to.
-            </p>
-          )}
+          <p className="hint" style={{ marginTop: "1rem" }}>
+            We need your permission to search and create playlists in your
+            account. We cannot use your email address or any other information
+            you do not grant access to.
+          </p>
         </div>
       )}
       <Footer />

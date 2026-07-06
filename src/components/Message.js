@@ -15,11 +15,6 @@ import levenshtein from "fast-levenshtein";
 import { Markets } from "./Markets";
 import { Share } from "./Share";
 import Song from "./Song";
-import {
-  addSongsToPlaylist,
-  createEmptyPlaylist,
-  searchForSong,
-} from "../services/spotify";
 
 const LOW_SUCCESS_WORDS = ["I", "a", "do", "and", "you", "love", "the"].map(
   (string) => string.toLowerCase(),
@@ -27,9 +22,9 @@ const LOW_SUCCESS_WORDS = ["I", "a", "do", "and", "you", "love", "the"].map(
 const DEFAULT_PLAYLIST_TITLE = "A playlist message";
 const showMarketSelector = false;
 
-export function Message({ accessToken, userId, refreshSession }) {
+export function Message({ provider, refreshSession }) {
   const [playlistTitle, setPlaylistTitle] = useState(DEFAULT_PLAYLIST_TITLE);
-  const [playlistId, setPlaylistId] = useState("");
+  const [playlistUrl, setPlaylistUrl] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [generalError, setGeneralError] = useState(false);
   const [marketValue] = useState("all");
@@ -109,7 +104,7 @@ export function Message({ accessToken, userId, refreshSession }) {
     });
     setText(newText);
     setSearchTerms(getSearchTerms(newText));
-    setPlaylistId("");
+    setPlaylistUrl("");
   }
 
   function changeArtist(uri, event) {
@@ -135,36 +130,31 @@ export function Message({ accessToken, userId, refreshSession }) {
       };
       return next;
     });
-    setPlaylistId("");
+    setPlaylistUrl("");
   }
 
   async function createPlaylist() {
-    const createEmptyPlaylistResponse = await createEmptyPlaylist(
-      userId,
-      playlistTitle,
-      !isPrivate,
-      accessToken,
-    )
-      .then((response) => response.json())
-      .catch(() => setGeneralError(true));
-    const { id } = createEmptyPlaylistResponse;
-
-    const uris = songs.map((value) => value["uri"]);
-    const addSongsToPlaylistResponse = await addSongsToPlaylist(
-      userId,
-      id,
-      uris,
-      accessToken,
-    )
-      .then((response) => response.json())
-      .catch(() => setGeneralError(true));
-    if (addSongsToPlaylistResponse?.snapshot_id) {
-      setPlaylistId(id);
+    try {
+      const created = await provider.createPlaylist({
+        title: playlistTitle,
+        isPublic: !isPrivate,
+      });
+      const uris = songs.map((s) => s.uri);
+      const added = await provider.addTracks(created.id, uris, {
+        ownerId: created.ownerId,
+      });
+      if (added.ok) {
+        setPlaylistUrl(created.url);
+      } else {
+        setGeneralError(true);
+      }
+    } catch {
+      setGeneralError(true);
     }
   }
 
   function getSongsForPlaylist() {
-    setPlaylistId("");
+    setPlaylistUrl("");
     setPlaylistTitle(DEFAULT_PLAYLIST_TITLE);
     setIsPrivate(false);
     setGeneralError(false);
@@ -177,82 +167,77 @@ export function Message({ accessToken, userId, refreshSession }) {
     setSongs(initialSongs);
 
     searchTerms.forEach(async (keyword, index) => {
-      const response = await searchForSong(keyword, accessToken).catch(() =>
-        setGeneralError(true),
-      );
-
-      if (response && !response.error) {
-        const { tracks } = response;
-        let resolvedSong = { title: keyword, status: "unmatched" };
-
-        if (tracks?.items) {
-          let allExactMatches = filter(
-            tracks.items,
-            (item) =>
-              !isEmpty(item.uri) &&
-              item.name.toLowerCase() === keyword.toLowerCase() &&
-              (marketValue === "all" ||
-                some(item.available_markets, marketValue)),
-          );
-
-          if (!isEmpty(allExactMatches)) {
-            let firstMatch, songsFromDifferentArtists;
-            if (allExactMatches.length > 1) {
-              firstMatch = maxBy(allExactMatches, "popularity");
-              songsFromDifferentArtists = allExactMatches.filter(
-                (match) => match.uri !== firstMatch.uri,
-              );
-            } else {
-              firstMatch = allExactMatches[0];
-            }
-            resolvedSong = {
-              status: "match",
-              index,
-              key: firstMatch.uri + index,
-              uri: firstMatch.uri,
-              title: firstMatch.name,
-              artist: firstMatch.artists[0].name,
-              allExactMatches: songsFromDifferentArtists
-                ? allExactMatches
-                : null,
-              alternativeArtists: songsFromDifferentArtists ?? null,
-            };
-          } else {
-            const possibleSuggestions = filter(tracks.items, (item) => {
-              const name = item.name.toLowerCase();
-              const containsTitle = name.indexOf(keyword.toLowerCase()) !== -1;
-              const hasNoHyphenOrParenthesis =
-                name.indexOf("-") === -1 && name.indexOf("(") === -1;
-              const isNotExcessivelyLong =
-                name.split(" ").length - keyword.split(" ").length < 2;
-              return (
-                containsTitle &&
-                hasNoHyphenOrParenthesis &&
-                isNotExcessivelyLong
-              );
-            });
-            if (possibleSuggestions.length) {
-              resolvedSong.possibleSuggestions = sortBy(
-                uniqBy(possibleSuggestions, (item) => item.name.toLowerCase()),
-                (item) => levenshtein.get(item.name, keyword),
-              );
-            }
-          }
-        }
-
-        // Update only this slot, leaving other in-flight results untouched
-        setSongs((prev) => {
-          const next = [...prev];
-          next[index] = resolvedSong;
-          return next;
-        });
-      } else {
-        if (response?.error?.status === 401) {
+      let response;
+      try {
+        response = await provider.searchTracks(keyword);
+      } catch (error) {
+        if (String(error?.message).includes("401")) {
           refreshSession();
         } else {
           setGeneralError(true);
         }
+        return;
       }
+
+      const items = response?.items ?? [];
+      let resolvedSong = { title: keyword, status: "unmatched" };
+
+      const allExactMatches = filter(
+        items,
+        (item) =>
+          !isEmpty(item.uri) &&
+          item.name.toLowerCase() === keyword.toLowerCase() &&
+          (marketValue === "all" ||
+            !item.available_markets ||
+            some(item.available_markets, marketValue)),
+      );
+
+      if (!isEmpty(allExactMatches)) {
+        let firstMatch, songsFromDifferentArtists;
+        if (allExactMatches.length > 1) {
+          firstMatch = maxBy(allExactMatches, "popularity");
+          songsFromDifferentArtists = allExactMatches.filter(
+            (match) => match.uri !== firstMatch.uri,
+          );
+        } else {
+          firstMatch = allExactMatches[0];
+        }
+        resolvedSong = {
+          status: "match",
+          index,
+          key: firstMatch.uri + index,
+          uri: firstMatch.uri,
+          title: firstMatch.name,
+          artist: firstMatch.artists[0].name,
+          allExactMatches: songsFromDifferentArtists ? allExactMatches : null,
+          alternativeArtists: songsFromDifferentArtists ?? null,
+        };
+      } else {
+        const possibleSuggestions = filter(items, (item) => {
+          const name = item.name.toLowerCase();
+          const containsTitle = name.indexOf(keyword.toLowerCase()) !== -1;
+          const hasNoHyphenOrParenthesis =
+            name.indexOf("-") === -1 && name.indexOf("(") === -1;
+          const isNotExcessivelyLong =
+            name.split(" ").length - keyword.split(" ").length < 2;
+          return (
+            containsTitle && hasNoHyphenOrParenthesis && isNotExcessivelyLong
+          );
+        });
+        if (possibleSuggestions.length) {
+          resolvedSong.possibleSuggestions = sortBy(
+            uniqBy(possibleSuggestions, (item) => item.name.toLowerCase()),
+            (item) => levenshtein.get(item.name, keyword),
+          );
+        }
+      }
+
+      // Update only this slot, leaving other in-flight results untouched
+      setSongs((prev) => {
+        const next = [...prev];
+        next[index] = resolvedSong;
+        return next;
+      });
     });
   }
 
@@ -317,7 +302,9 @@ export function Message({ accessToken, userId, refreshSession }) {
         </div>
       </div>
       <div className="well clearfix">
-        <div className={`sm_section ${playlistId && !generalError && "arrow"}`}>
+        <div
+          className={`sm_section ${playlistUrl && !generalError && "arrow"}`}
+        >
           <ul id="react-suggested-songs" className="clearfix list-group">
             {songs.map((song, index) => (
               <Song
@@ -330,8 +317,8 @@ export function Message({ accessToken, userId, refreshSession }) {
           </ul>
           {generalError ? (
             <div className="alert">
-              We're terribly sorry, but there seems to be a problem with the
-              Spotify API. Please check back again later.
+              We're terribly sorry, but there seems to be a problem with the{" "}
+              {provider.displayName} API. Please check back again later.
             </div>
           ) : hasMatchedSongs && !hasUnmatchedSongs && !hasPendingSongs ? (
             <div className="input-group">
@@ -363,11 +350,8 @@ export function Message({ accessToken, userId, refreshSession }) {
           ) : null}
         </div>
       </div>
-      {playlistId && !generalError && (
-        <Share
-          url={`https://open.spotify.com/playlist/${playlistId}`}
-          isPrivate={isPrivate}
-        />
+      {playlistUrl && !generalError && (
+        <Share url={playlistUrl} isPrivate={isPrivate} />
       )}
     </div>
   );
