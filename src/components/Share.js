@@ -29,22 +29,6 @@ export class Share extends React.Component {
     }
   }
 
-  get twitterButton() {
-    const text = `I created a @playlistmessage, check it out: ${this.props.url}`;
-
-    return (
-      <a
-        className="btn btn-secondary btn-success"
-        target="_blank"
-        rel="noopener noreferrer"
-        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`}
-      >
-        <i className="fa fa-twitter social_icons" />
-        <span className="hide-on-mobile">Tweet</span>
-      </a>
-    );
-  }
-
   get whatsAppButton() {
     const text =
       "I created a playlistmessage for you. Check it out: " + this.props.url;
@@ -128,10 +112,7 @@ export class Share extends React.Component {
                 </a>
                 {this.whatsAppButton}
               </div>
-              <div className="input-group-btn">
-                {this.twitterButton}
-                {this.facebookButton}
-              </div>
+              <div className="input-group-btn">{this.facebookButton}</div>
             </div>
           )}
           <div className="input-group">

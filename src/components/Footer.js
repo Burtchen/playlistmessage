@@ -3,9 +3,6 @@ import React from "react";
 const Footer = () => (
   <div className="site_footer">
     <div className="sm_section">
-      <a href="https://twitter.com/playlistmessage">
-        <span>Twitter</span>
-      </a>
       <a href="https://github.com/Burtchen/playlistmessage">
         <span>Github/FAQ</span>
       </a>

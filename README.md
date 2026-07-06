@@ -10,7 +10,7 @@ Licensed under MIT.
 ## How this works
 Start by typing your message and use normal parentheses `()` a delimiters. If you do not use any delimiters, playlistmessage will use every single word as a search string, so for specific phrases such as "in the end" or "let it be", those are required.
 
-When you are happy with the selection, you can create a message on your spotify account. You can share finished playlists through social media. The app does not preload any smart social widgets that might track you, the buttons are just links. But obviously, once you click on any icon and go the site, their terms and conditions apply. Again, there is no tracking here, and you can obviously remove the playlistmessage mention from Twitter as well if you wish.
+When you are happy with the selection, you can create a message on your spotify account. You can share finished playlists through social media. The app does not preload any smart social widgets that might track you, the buttons are just links. But obviously, once you click on any icon and go the site, their terms and conditions apply. Again, there is no tracking here.
 
 Have fun and enjoy writing playlist messages!
 
@@ -33,7 +33,7 @@ Sure! Revoking access in your [account management](https://www.spotify.com/de/ac
 
 **I have another question that's not on here.**
 
-Shout it to me on twitter.
+Open an issue on [GitHub](https://github.com/Burtchen/playlistmessage/issues).
 
 **I prefer dark chocolate over the lighter kinds. Am I wrong?**
 
